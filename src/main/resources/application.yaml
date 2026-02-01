@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: SpringProject
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test_schema
+    username: postgres
+    password: Nol0511ok*
+  jpa:
+    hibernate:
+      ddl-auto: update
+      enable_lazy_load_no_trans: false
+    show-sql: true
+    open-in-view: false
+
