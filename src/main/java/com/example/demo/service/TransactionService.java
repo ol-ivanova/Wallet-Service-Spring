@@ -23,15 +23,11 @@ public class TransactionService {
     }
 
     public List<Transaction> findAll(){
-        List<Transaction> transactions = transactionRepository.findAll();
-        if(transactions.isEmpty()){
-            System.out.println("Транзакций не найдено");
-        }
-        return transactions;
+        return transactionRepository.findAll();
     }
 
     public List<Transaction> getTransactionHistoryByNumberAccount(Long accountNumber) {
-
+        return transactionRepository.findTransactionByAccountNumber(accountNumber);
     }
 
 }

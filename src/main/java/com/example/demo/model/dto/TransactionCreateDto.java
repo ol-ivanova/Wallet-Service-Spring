@@ -16,6 +16,6 @@ import java.math.BigDecimal;
 public class TransactionCreateDto {
     private TransactionType type;
     private BigDecimal sum;
-    private PlayerAccount playerAccountFrom;
-    private PlayerAccount playerAccountTo;
+    private long playerAccountFrom;
+    private long playerAccountTo;
 }

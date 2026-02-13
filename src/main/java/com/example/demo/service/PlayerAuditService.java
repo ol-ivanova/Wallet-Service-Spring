@@ -31,11 +31,6 @@ public class PlayerAuditService {
 
     public List<PlayerAudit> findAuditByPlayerId(int playerId){
         PlayerAudit playerAudit1 = playerAuditRepository.findById(playerId).get();
-//        Player player = playerAudit1.getPlayer();
-//        Integer id = player.getId();
-//        String name = player.getName();
-
-
         return List.of(playerAudit1);
     }
 }

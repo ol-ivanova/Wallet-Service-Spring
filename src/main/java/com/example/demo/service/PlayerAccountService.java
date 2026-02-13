@@ -5,8 +5,11 @@ import com.example.demo.model.domain.Player;
 import com.example.demo.model.domain.PlayerAccount;
 import com.example.demo.model.dto.PlayerAccountCreateDto;
 import com.example.demo.model.dto.PlayerAccountReadDto;
+import com.example.demo.model.dto.TransactionCreateDto;
 import com.example.demo.model.exception.PlayerAccountException;
+import com.example.demo.model.exception.TransferException;
 import com.example.demo.repository.PlayerAccountRepository;
+import com.example.demo.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +62,36 @@ public class PlayerAccountService {
     @Transactional
     public void deletePlayerAccountById(UUID id){
         playerAccountRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void doCreditOperation(TransactionCreateDto transactionCreateDto){
+        PlayerAccount playerAccountTo = playerAccountRepository.findPlayerAccountByAccountNumber(
+                transactionCreateDto.getPlayerAccountTo()
+        );
+        PlayerAccount playerAccountFrom = playerAccountRepository.findPlayerAccountByAccountNumber(
+                transactionCreateDto.getPlayerAccountFrom()
+        );
+        if(transactionCreateDto.getSum().compareTo(playerAccountFrom.getBalance()) >=0){
+            throw new TransferException("Сумма не может превышать баланс");
+        }
+
+        playerAccountTo.setBalance(playerAccountTo.getBalance().add(transactionCreateDto.getSum()));
+        playerAccountFrom.setBalance(playerAccountFrom.getBalance().subtract(transactionCreateDto.getSum()));
+    }
+
+    @Transactional
+    public void doDebitOperation(TransactionCreateDto transactionCreateDto){
+        PlayerAccount playerAccountFrom = playerAccountRepository.findPlayerAccountByAccountNumber(
+                transactionCreateDto.getPlayerAccountTo()
+        );
+        PlayerAccount playerAccountTo = playerAccountRepository.findPlayerAccountByAccountNumber(
+                transactionCreateDto.getPlayerAccountFrom()
+        );
+        if(transactionCreateDto.getSum().compareTo(playerAccountTo.getBalance()) >=0){
+            throw new TransferException("Сумма не может превышать баланс");
+        }
+        playerAccountFrom.setBalance(playerAccountFrom.getBalance().subtract(transactionCreateDto.getSum()));
+        playerAccountTo.setBalance(playerAccountTo.getBalance().add(transactionCreateDto.getSum()));
     }
 }
