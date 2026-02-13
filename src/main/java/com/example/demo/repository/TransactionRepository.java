@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
     @Query(nativeQuery = true, value = """
-SELECT * FROM transaction WHERE  player_account_from = :accountNumber OR player_account_to = :accountNumber;
-""")
+        SELECT * FROM transaction WHERE  player_account_from = :accountNumber OR player_account_to = :accountNumber;
+    """)
     List<Transaction> findTransactionByAccountNumber(Long accountNumber);
 }

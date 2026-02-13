@@ -42,17 +42,22 @@ public class Transaction {
      */
     @Column(name = "sum", nullable = false)
     private BigDecimal sum;
+
     /**
      * Счет отправителя
      */
-
     @ManyToOne
-    @JoinColumn(name = "player_account_from")
-    private PlayerAccount playerAccountFrom;
+    @JoinColumn(name = "player_account_from", insertable = false, updatable = false)
+    private PlayerAccount accountFrom;
+    @Column(name = "player_account_from")
+    private UUID playerAccountFrom;
+
     /**
      * Счет получателя
      */
     @ManyToOne
-    @JoinColumn(name = "player_account_to")
-    private PlayerAccount playerAccountTo;
+    @JoinColumn(name = "player_account_to", insertable = false, updatable = false)
+    private PlayerAccount accountTo;
+    @Column(name = "player_account_to")
+    private UUID playerAccountTo;
 }

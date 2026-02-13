@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface PlayerAccountRepository extends JpaRepository<PlayerAccount, UUID> {
     @Query(nativeQuery = true, value = """
-SELECT * FROM player_account WHERE account_number = :accountNumber;
-""")
-     PlayerAccount findPlayerAccountByAccountNumber(Long accountNumber);
+        SELECT * FROM player_account WHERE account_number = :accountNumber;
+    """)
+     PlayerAccount findPlayerAccountByAccountNumber(UUID accountNumber);
 }
