@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,28 +30,35 @@ public class PlayerService {
         if(playerRepository.findByUsername(player.getUsername()).isPresent()){
             throw new PlayerException("Такой логин уже используется");
         }
-        Player savedPlayer = playerRepository.save(playerMapper.dtoToPlayer(playerCreateDto));
+
+        Player savedPlayer = playerRepository.save(player);
         PlayerAccountReadDto playerAccountReadDto = playerAccountService.createPlayerAccount(savedPlayer);
-        return playerMapper.playerToDto(savedPlayer);
+        PlayerReadDto playerReadDto = playerMapper.playerToDto(savedPlayer);
+        playerReadDto.setPlayerAccount(playerAccountReadDto);
+
+        return playerReadDto;
     }
 
     public List<Player> findAll(){
         return playerRepository.findAll();
     }
 
-    public Player findByCredentials(String username, String password){
+    public PlayerReadDto findByCredentials(String username, String password){
         return playerRepository.findByUsernameAndPassword(username, password)
+                .map(player -> playerMapper.playerToDto(player))
                 .orElseThrow(() -> new PlayerException("Пользователь не найден"));
     }
 
     @Transactional
-    public PlayerReadDto updatePlayer(PlayerCreateDto playerCreateDto){
-        Player updatedPlayer = playerRepository.save(playerMapper.dtoToPlayer(playerCreateDto));
-        PlayerAccount playerAccount = updatedPlayer.getPlayerAccount();
-        PlayerAccountReadDto playerAccountReadDto = PlayerAccountReadDto.builder()
-                .accountNumber(playerAccount.getAccountNumber())
-                .balance(playerAccount.getBalance())
-                .build();
+    public PlayerReadDto updatePlayer(Integer id, PlayerCreateDto playerCreateDto){
+        Player player = playerRepository.findById(id).orElseThrow(() -> new PlayerException("Пользователь не найден"));
+
+        player.setName(playerCreateDto.getName());
+        player.setUsername(playerCreateDto.getUsername());
+        player.setPassword(playerCreateDto.getPassword());
+
+        Player updatedPlayer = playerRepository.save(player);
+
         return playerMapper.playerToDto(updatedPlayer);
     }
 

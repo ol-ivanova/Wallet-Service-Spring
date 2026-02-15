@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = PlayerAccountMapper.class)
 public interface PlayerMapper {
     Player dtoToPlayer(PlayerCreateDto playerCreateDto);
     PlayerReadDto playerToDto(Player player);
