@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> getTransactionHistoryByNumberAccount(Long accountNumber) {
+    public List<Transaction> getTransactionHistoryByNumberAccount(UUID accountNumber) {
         return transactionRepository.findTransactionByAccountNumber(accountNumber);
     }
 

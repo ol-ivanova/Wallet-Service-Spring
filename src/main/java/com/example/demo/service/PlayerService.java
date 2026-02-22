@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class PlayerService {
         Player savedPlayer = playerRepository.save(player);
         PlayerAccountReadDto playerAccountReadDto = playerAccountService.createPlayerAccount(savedPlayer);
         PlayerReadDto playerReadDto = playerMapper.playerToDto(savedPlayer);
-        playerReadDto.setPlayerAccount(playerAccountReadDto);
+        playerReadDto.getPlayerAccounts().add(playerAccountReadDto);
 
         return playerReadDto;
     }

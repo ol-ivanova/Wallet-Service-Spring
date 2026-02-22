@@ -32,9 +32,11 @@ public class PlayerAccount {
      * id пользователя, к которому привязан счет
      */
 
-    @OneToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name = "player_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "player_id", insertable = false, updatable = false)
     private Player player;
+    @Column(name = "player_id")
+    private Integer playerId;
 
     @OneToMany (mappedBy = "playerAccountFrom")
     private List<Transaction> transactionsFrom;

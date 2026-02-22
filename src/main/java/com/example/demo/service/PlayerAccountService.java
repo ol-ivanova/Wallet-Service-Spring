@@ -5,6 +5,7 @@ import com.example.demo.model.domain.Player;
 import com.example.demo.model.domain.PlayerAccount;
 import com.example.demo.model.dto.PlayerAccountCreateDto;
 import com.example.demo.model.dto.PlayerAccountReadDto;
+import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.TransactionCreateDto;
 import com.example.demo.model.exception.PlayerAccountException;
 import com.example.demo.model.exception.TransferException;
@@ -36,32 +37,38 @@ public class PlayerAccountService {
         return playerAccountMapper.playerAccountToDto(savedPlayerAccount);
     }
 
+    @Transactional
+    public PlayerAccountReadDto createPlayerAccount(PlayerAccountCreateDto playerAccountCreateDto){
+        PlayerAccount playerAccount = playerAccountMapper.dtoToPlayerAccount(playerAccountCreateDto);
+        PlayerAccount savedPlayerAccount = playerAccountRepository.save(playerAccount);
+        return playerAccountMapper.playerAccountToDto(savedPlayerAccount);
+    }
+
     public List<PlayerAccount> findAll(){
         return playerAccountRepository.findAll();
     }
 
-    public PlayerAccount findPlayerAccountById(UUID id){
-        Optional<PlayerAccount> byId = playerAccountRepository.findById(id);
-//                .orElseThrow(() -> new PlayerAccountException("Аккаунт не найден"));
-        PlayerAccount playerAccount = byId.get();
-        Player player = playerAccount.getPlayer();
-        Integer idPlayer = player.getId();
-        String name = player.getName();
-        return playerAccount;
+    public PlayerAccountReadDto findPlayerAccountByAccountNumber(UUID accountNumber){
+        PlayerAccount playerAccount = playerAccountRepository.findById(accountNumber)
+                .orElseThrow(() -> new PlayerAccountException("Аккаунт не найден"));
+        PlayerAccountReadDto playerAccountReadDto = playerAccountMapper.playerAccountToDto(playerAccount);
+        return playerAccountReadDto;
 
     }
 
     @Transactional
-    public PlayerAccountReadDto updatePlayerAccount(PlayerAccountCreateDto playerAccountCreateDto){
-        PlayerAccount updatedPlayerAccount = playerAccountRepository.save(
-                playerAccountMapper.dtoToPlayerAccount(playerAccountCreateDto)
-        );
-        return playerAccountMapper.playerAccountToDto(updatedPlayerAccount);
+    public PlayerAccountReadDto updatePlayerAccount(UUID accountNumber, PlayerAccountCreateDto playerAccountCreateDto){
+        PlayerAccount playerAccount = playerAccountRepository.findById(accountNumber)
+                .orElseThrow(() -> new PlayerAccountException("Аккаунт не найден"));
+
+        playerAccount.setBalance(playerAccountCreateDto.getBalance());
+
+        return playerAccountMapper.playerAccountToDto(playerAccountRepository.save(playerAccount));
     }
 
     @Transactional
-    public void deletePlayerAccountById(UUID id){
-        playerAccountRepository.deleteById(id);
+    public void deletePlayerAccountByAccountNumber(UUID accountNumber){
+        playerAccountRepository.deleteById(accountNumber);
     }
 
     @Transactional

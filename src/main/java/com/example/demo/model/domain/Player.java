@@ -37,8 +37,8 @@ public class Player {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "player", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private PlayerAccount playerAccount;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.REMOVE)
+    private List<PlayerAccount> playerAccount;
 
     @OneToMany(mappedBy = "player")
     private List<PlayerAudit> audit;
