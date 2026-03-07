@@ -3,21 +3,16 @@ package com.example.demo.service;
 import com.example.demo.mapper.PlayerAccountMapper;
 import com.example.demo.model.domain.Player;
 import com.example.demo.model.domain.PlayerAccount;
-import com.example.demo.model.dto.PlayerAccountCreateDto;
-import com.example.demo.model.dto.PlayerAccountReadDto;
-import com.example.demo.model.dto.PlayerCreateDto;
-import com.example.demo.model.dto.TransactionCreateDto;
+import com.example.demo.model.dto.*;
+import com.example.demo.model.enums.AuditAction;
 import com.example.demo.model.exception.PlayerAccountException;
 import com.example.demo.model.exception.TransferException;
 import com.example.demo.repository.PlayerAccountRepository;
-import com.example.demo.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,7 +21,14 @@ import java.util.UUID;
 public class PlayerAccountService {
     private final PlayerAccountRepository playerAccountRepository;
     private final PlayerAccountMapper playerAccountMapper;
+    private final PlayerAuditService playerAuditService;
+    private final TransactionService transactionService;
 
+    /**
+     * Метод для создания аккаунта пользователя
+     * @param player - сущность пользователя класса Player
+     * @return - dto объект класса PlayerAccountReadDto
+     */
     @Transactional
     public PlayerAccountReadDto createPlayerAccount(Player player){
         PlayerAccount playerAccount = PlayerAccount.builder()
@@ -37,6 +39,11 @@ public class PlayerAccountService {
         return playerAccountMapper.playerAccountToDto(savedPlayerAccount);
     }
 
+    /**
+     * Метод для создания аккаунта пользователя
+     * @param playerAccountCreateDto - dto объект класса PlayerAccountCreateDto
+     * @return - dto объект класса PlayerAccountReadDto
+     */
     @Transactional
     public PlayerAccountReadDto createPlayerAccount(PlayerAccountCreateDto playerAccountCreateDto){
         PlayerAccount playerAccount = playerAccountMapper.dtoToPlayerAccount(playerAccountCreateDto);
@@ -44,18 +51,30 @@ public class PlayerAccountService {
         return playerAccountMapper.playerAccountToDto(savedPlayerAccount);
     }
 
-    public List<PlayerAccount> findAll(){
-        return playerAccountRepository.findAll();
-    }
-
+    /**
+     * Метод для поиска аккаунта пользователя по номеру счета
+     * @param accountNumber - номер счета
+     * @return - dto объект класса PlayerAccountReadDto
+     */
     public PlayerAccountReadDto findPlayerAccountByAccountNumber(UUID accountNumber){
         PlayerAccount playerAccount = playerAccountRepository.findById(accountNumber)
                 .orElseThrow(() -> new PlayerAccountException("Аккаунт не найден"));
+        PlayerAuditCreateDto playerAuditCreateDto = PlayerAuditCreateDto.builder()
+                .player(playerAccount.getPlayer())
+                .action(AuditAction.LOGIN)
+                .build();
+        playerAuditService.createAudit(playerAuditCreateDto);
         PlayerAccountReadDto playerAccountReadDto = playerAccountMapper.playerAccountToDto(playerAccount);
         return playerAccountReadDto;
 
     }
 
+    /**
+     * Метод для обновления аккаунта пользователя
+     * @param accountNumber - номер счета
+     * @param playerAccountCreateDto - dto объект PlayerAccountCreateDto, содержащий новую информацию
+     * @return - dto объект класса PlayerAccountReadDto
+     */
     @Transactional
     public PlayerAccountReadDto updatePlayerAccount(UUID accountNumber, PlayerAccountCreateDto playerAccountCreateDto){
         PlayerAccount playerAccount = playerAccountRepository.findById(accountNumber)
@@ -66,11 +85,19 @@ public class PlayerAccountService {
         return playerAccountMapper.playerAccountToDto(playerAccountRepository.save(playerAccount));
     }
 
+    /**
+     * Метод для удаления аккаунта пользователя по номеру счета
+     * @param accountNumber - номер счета
+     */
     @Transactional
     public void deletePlayerAccountByAccountNumber(UUID accountNumber){
         playerAccountRepository.deleteById(accountNumber);
     }
 
+    /**
+     * Метод для кредит операций
+     * @param transactionCreateDto - dto объект класса TransactionCreateDto, содержащий информацию для транзакции
+     */
     @Transactional
     public void doCreditOperation(TransactionCreateDto transactionCreateDto){
         PlayerAccount playerAccountTo = playerAccountRepository.findPlayerAccountByAccountNumber(
@@ -79,14 +106,19 @@ public class PlayerAccountService {
         PlayerAccount playerAccountFrom = playerAccountRepository.findPlayerAccountByAccountNumber(
                 transactionCreateDto.getPlayerAccountFrom()
         );
-        if(transactionCreateDto.getSum().compareTo(playerAccountFrom.getBalance()) >=0){
+        if(transactionCreateDto.getSum().compareTo(playerAccountFrom.getBalance()) >0){
             throw new TransferException("Сумма не может превышать баланс");
         }
-
         playerAccountTo.setBalance(playerAccountTo.getBalance().add(transactionCreateDto.getSum()));
         playerAccountFrom.setBalance(playerAccountFrom.getBalance().subtract(transactionCreateDto.getSum()));
+
+        transactionService.transferData(transactionCreateDto);
     }
 
+    /**
+     * Метод для дебит операций
+     * @param transactionCreateDto - dto объект класса TransactionCreateDto, содержащий информацию для транзакции
+     */
     @Transactional
     public void doDebitOperation(TransactionCreateDto transactionCreateDto){
         PlayerAccount playerAccountFrom = playerAccountRepository.findPlayerAccountByAccountNumber(
@@ -95,10 +127,12 @@ public class PlayerAccountService {
         PlayerAccount playerAccountTo = playerAccountRepository.findPlayerAccountByAccountNumber(
                 transactionCreateDto.getPlayerAccountFrom()
         );
-        if(transactionCreateDto.getSum().compareTo(playerAccountTo.getBalance()) >=0){
+        if(transactionCreateDto.getSum().compareTo(playerAccountTo.getBalance()) >0){
             throw new TransferException("Сумма не может превышать баланс");
         }
         playerAccountFrom.setBalance(playerAccountFrom.getBalance().subtract(transactionCreateDto.getSum()));
         playerAccountTo.setBalance(playerAccountTo.getBalance().add(transactionCreateDto.getSum()));
+
+        transactionService.transferData(transactionCreateDto);
     }
 }

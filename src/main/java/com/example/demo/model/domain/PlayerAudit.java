@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "player_audit")
 @Entity
+/**
+ * Сущность - аудит пользователя
+ */
 public class PlayerAudit {
     /**
      * id лога, генерируемый при вставке экземпляра класса в БД
@@ -23,17 +26,20 @@ public class PlayerAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     /**
      * Дата и время, генерируемое при вставке экземпляра класса в БД
      */
     @Column(name = "date_time")
     @CreatedDate
     private LocalDateTime dateTime;
+
     /**
      * Тип активности
      */
     @Enumerated(EnumType.STRING)
     private AuditAction action;
+
     /**
      * id пользователя, к которому привязана активность
      */

@@ -19,6 +19,9 @@ import java.util.UUID;
 @Builder
 @Table(name = "transaction")
 @Entity
+/**
+ * Сущность - транзакции пользователя
+ */
 public class Transaction {
     /**
      * id, генерируемый при вставке экземпляра класса в БД
@@ -26,17 +29,20 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     /**
      * Время транзакции, генерируемое при вставке экземпляра класса в БД
      */
     @Column(name = "created_date")
     @CreatedDate
     private LocalDateTime createdDate;
+
     /**
      * Тип транзакции
      */
     @Enumerated(EnumType.STRING)
     private TransactionType type;
+
     /**
      * Сумма транзакции
      */

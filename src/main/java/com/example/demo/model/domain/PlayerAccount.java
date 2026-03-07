@@ -16,6 +16,9 @@ import java.util.UUID;
 @Builder
 @Table(name = "player_account")
 @Entity
+/**
+ * Сущность - аккаунт пользователя
+ */
 public class PlayerAccount {
     /**
      * Номер счета, генерируемый при вставке экземпляра класса в БД
@@ -23,24 +26,31 @@ public class PlayerAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID accountNumber;
+
     /**
      * Баланс счета
      */
     @Column(name = "balance")
     private BigDecimal balance;
-    /**
-     * id пользователя, к которому привязан счет
-     */
 
+    /**
+     * id пользователя, к которому привязан аккаунт
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "player_id", insertable = false, updatable = false)
     private Player player;
     @Column(name = "player_id")
     private Integer playerId;
 
+    /**
+     * Транзакции счета. Лист отправителей
+     */
     @OneToMany (mappedBy = "playerAccountFrom")
     private List<Transaction> transactionsFrom;
 
+    /**
+     * Транзакции счета. Лист получателей
+     */
     @OneToMany (mappedBy = "playerAccountTo")
     private List<Transaction> transactionsTo;
 }

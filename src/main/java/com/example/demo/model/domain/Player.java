@@ -14,6 +14,9 @@ import java.util.List;
 @Table(name = "player")
 @Entity
 @Data
+/**
+ * Сущность - пользователь
+ */
 public class Player {
     /**
      * id, генерируемый при вставке экземпляра класса в БД
@@ -21,25 +24,34 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     /**
      * Имя пользователя
      */
     @Column(name = "name", nullable = false)
     private String name;
+
     /**
      * Логин пользователя
      */
     @Column(name = "username", nullable = false, unique = true)
     private String username;
+
     /**
      * Пароль игрока
      */
     @Column(name = "password", nullable = false)
     private String password;
 
+    /**
+     * Аккаунт пользователя
+     */
     @OneToMany(mappedBy = "player", cascade = CascadeType.REMOVE)
     private List<PlayerAccount> playerAccount;
 
+    /**
+     * Аудит пользователя
+     */
     @OneToMany(mappedBy = "player")
     private List<PlayerAudit> audit;
 }

@@ -18,15 +18,20 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
 
+    /**
+     * Метод для фиксирования информации о транзакции
+     * @param transactionCreateDto - dto объект класса TransactionCreateDto
+     */
     @Transactional
     public void transferData(TransactionCreateDto transactionCreateDto){
-        transactionRepository.save(transactionMapper.dtoToDomain(transactionCreateDto));
+        transactionRepository.save(transactionMapper.dtoToTransaction(transactionCreateDto));
     }
 
-    public List<Transaction> findAll(){
-        return transactionRepository.findAll();
-    }
-
+    /**
+     * Метод для получения истории транзакций по номеру счета
+     * @param accountNumber - номер счета
+     * @return - список транзакций
+     */
     public List<Transaction> getTransactionHistoryByNumberAccount(UUID accountNumber) {
         return transactionRepository.findTransactionByAccountNumber(accountNumber);
     }

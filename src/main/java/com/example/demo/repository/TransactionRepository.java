@@ -11,7 +11,11 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-
+    /**
+     * Метод для поиска транзакций по номеру счета
+     * @param accountNumber - номер счета
+     * @return - список транзакций
+     */
     @Query(nativeQuery = true, value = """
         SELECT * FROM transaction WHERE  player_account_from = :accountNumber OR player_account_to = :accountNumber;
     """)

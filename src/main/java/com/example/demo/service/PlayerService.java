@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.mapper.PlayerMapper;
 import com.example.demo.model.domain.Player;
-import com.example.demo.model.domain.PlayerAccount;
 import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.PlayerReadDto;
@@ -13,9 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +21,11 @@ public class PlayerService {
     private final PlayerAccountService playerAccountService;
     private final PlayerMapper playerMapper;
 
+    /**
+     * Метод для создания пользователя
+     * @param playerCreateDto - dto объект класса PlayerCreateDto
+     * @return - dto объект класса PlayerReadDto
+     */
     @Transactional
     public PlayerReadDto createPlayer(PlayerCreateDto playerCreateDto){
         Player player = playerMapper.dtoToPlayer(playerCreateDto);
@@ -40,16 +41,24 @@ public class PlayerService {
         return playerReadDto;
     }
 
-    public List<Player> findAll(){
-        return playerRepository.findAll();
-    }
-
+    /**
+     * Метод для поиска пользователя по логину и паролю
+     * @param username - логин пользователя
+     * @param password - пароль пользователя
+     * @return - dto объект класса PlayerReadDto
+     */
     public PlayerReadDto findByCredentials(String username, String password){
         return playerRepository.findByUsernameAndPassword(username, password)
                 .map(player -> playerMapper.playerToDto(player))
                 .orElseThrow(() -> new PlayerException("Пользователь не найден"));
     }
 
+    /**
+     * Метод для обновления пользователя
+     * @param id - id пользователя
+     * @param playerCreateDto - dto объект класса PlayerCreateDto, содержащий новую информацию
+     * @return - dto объект класса PlayerReadDto
+     */
     @Transactional
     public PlayerReadDto updatePlayer(Integer id, PlayerCreateDto playerCreateDto){
         Player player = playerRepository.findById(id).orElseThrow(() -> new PlayerException("Пользователь не найден"));
@@ -63,6 +72,10 @@ public class PlayerService {
         return playerMapper.playerToDto(updatedPlayer);
     }
 
+    /**
+     * Метод для удаления пользователя
+     * @param id - id пользователя
+     */
     @Transactional
     public void deletePlayerById(int id){
         playerRepository.deleteById(id);
