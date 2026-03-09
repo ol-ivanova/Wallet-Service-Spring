@@ -9,6 +9,8 @@ import com.example.demo.model.dto.PlayerReadDto;
 import com.example.demo.model.exception.PlayerException;
 import com.example.demo.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PlayerService {
     private final PlayerRepository playerRepository;
     private final PlayerAccountService playerAccountService;
     private final PlayerMapper playerMapper;
+    private final Session session;
+
+    /**
+     * только findById реально кешируется в PC, все остальные запросы (ex findByGuid, findByUsername и т д)- нет,
+     * но при этом они также попадают в PC, т.е. будут проассоциированы с сессией и можно производить какие-либо манипуляции с ними
+     */
+    public Player findById(int id){
+        playerRepository.findByUsername("olya");
+        playerRepository.findByUsername("olya");
+
+        return playerRepository.findById(id).get();
+    }
 
     /**
      * Метод для создания пользователя
@@ -70,6 +85,23 @@ public class PlayerService {
         Player updatedPlayer = playerRepository.save(player);
 
         return playerMapper.playerToDto(updatedPlayer);
+    }
+
+    @Transactional
+    public void updatePlayerTest(Integer id, PlayerCreateDto playerCreateDto){
+        Player player = playerRepository.findById(id).orElseThrow(() -> new PlayerException("Пользователь не найден"));
+        log.info("isDirty: {}", session.isDirty());
+        player.setName(playerCreateDto.getName());
+        player.setUsername(playerCreateDto.getUsername());
+        player.setPassword(playerCreateDto.getPassword());
+
+        log.info("isDirty: {}", session.isDirty());
+
+        playerRepository.flush();
+        log.info("message1");
+//        Player updatedPlayer = playerRepository.save(player);
+
+//        return playerMapper.playerToDto(updatedPlayer);
     }
 
     /**
