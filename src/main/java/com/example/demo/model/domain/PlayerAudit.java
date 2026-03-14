@@ -43,7 +43,7 @@ public class PlayerAudit {
     /**
      * id пользователя, к которому привязана активность
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "player_id")
     private Player player;
 }

@@ -13,11 +13,6 @@ public class SpringProjectApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SpringProjectApplication.class, args);
         PlayerService playerService = context.getBean(PlayerService.class);
-        PlayerCreateDto dto = PlayerCreateDto.builder()
-                .name("Olya123")
-                .username("olya")
-                .password("abc123")
-                .build();
-        playerService.updatePlayerTest(1, dto);
+        playerService.test();
     }
 }

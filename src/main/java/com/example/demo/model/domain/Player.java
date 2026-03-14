@@ -46,7 +46,7 @@ public class Player {
     /**
      * Аккаунт пользователя
      */
-    @OneToMany(mappedBy = "player", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
     private List<PlayerAccount> playerAccount;
 
     /**

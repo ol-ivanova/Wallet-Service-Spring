@@ -2,17 +2,26 @@ package com.example.demo.service;
 
 import com.example.demo.mapper.PlayerMapper;
 import com.example.demo.model.domain.Player;
+import com.example.demo.model.domain.PlayerAccount;
+import com.example.demo.model.domain.PlayerAudit;
 import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.PlayerReadDto;
 
+import com.example.demo.model.enums.AuditAction;
 import com.example.demo.model.exception.PlayerException;
+import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -24,6 +33,34 @@ public class PlayerService {
     private final PlayerAccountService playerAccountService;
     private final PlayerMapper playerMapper;
     private final Session session;
+    private final PlayerAuditRepository playerAuditRepository;
+
+    @Transactional
+    public void test(){
+
+//        PlayerAccount playerAccount = PlayerAccount.builder()
+//                .accountNumber(UUID.randomUUID())
+//                .balance(new BigDecimal(0))
+//                .build();
+//
+//        player.setPlayerAccount(List.of(playerAccount));
+
+        Player player = Player.builder()
+                .username("test username 123")
+                .password("123")
+                .build();
+
+        PlayerAudit playerAudit = PlayerAudit.builder()
+                .action(AuditAction.LOGIN)
+                .dateTime(LocalDateTime.now())
+                .build();
+
+        player.setAudit(List.of(playerAudit));
+
+        playerRepository.save(player);
+
+//        playerRepository.save(player);
+    }
 
     /**
      * только findById реально кешируется в PC, все остальные запросы (ex findByGuid, findByUsername и т д)- нет,
