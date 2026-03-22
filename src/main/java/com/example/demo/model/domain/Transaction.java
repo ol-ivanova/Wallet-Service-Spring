@@ -13,15 +13,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Сущность - транзакции пользователя
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Table(name = "transaction")
 @Entity
-/**
- * Сущность - транзакции пользователя
- */
+@Table(name = "transaction")
 public class Transaction {
     /**
      * id, генерируемый при вставке экземпляра класса в БД

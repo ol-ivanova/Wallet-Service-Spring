@@ -6,19 +6,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность - аудит пользователя
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Table(name = "player_audit")
 @Entity
-/**
- * Сущность - аудит пользователя
- */
+@Table(name = "player_audit")
+@ToString(exclude = "player")
 public class PlayerAudit {
     /**
      * id лога, генерируемый при вставке экземпляра класса в БД
@@ -43,7 +45,8 @@ public class PlayerAudit {
     /**
      * id пользователя, к которому привязана активность
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "player_id")
+//    @ToString.Exclude
     private Player player;
 }

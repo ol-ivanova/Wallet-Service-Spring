@@ -10,15 +10,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Сущность - аккаунт пользователя
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Table(name = "player_account")
 @Entity
-/**
- * Сущность - аккаунт пользователя
- */
+@Table(name = "player_account")
 public class PlayerAccount {
     /**
      * Номер счета, генерируемый при вставке экземпляра класса в БД

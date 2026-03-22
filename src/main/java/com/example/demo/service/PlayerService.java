@@ -12,6 +12,7 @@ import com.example.demo.model.enums.AuditAction;
 import com.example.demo.model.exception.PlayerException;
 import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -33,33 +35,61 @@ public class PlayerService {
     private final PlayerAccountService playerAccountService;
     private final PlayerMapper playerMapper;
     private final Session session;
+    private final EntityManager entityManager;
     private final PlayerAuditRepository playerAuditRepository;
+    private final TestService testService;
 
     @Transactional
     public void test(){
+//        Player player = Player.builder()
+//                .id(3)
+//                .name("Artur")
+//                .username("test")
+//                .password("test")
+//                .build();
+//        Player player1 = entityManager.merge(player);
 
-//        PlayerAccount playerAccount = PlayerAccount.builder()
-//                .accountNumber(UUID.randomUUID())
-//                .balance(new BigDecimal(0))
+//        Player artur = playerRepository.findById(3).get();
+//        artur.setName("Artur1");
+//        artur.setUsername("test123");
+//        entityManager.refresh(artur);
+//        System.out.println();
+
+//        Player player = Player.builder()
+//                .name("test name")
+//                .username("test username 123")
+//                .password("123")
 //                .build();
 //
-//        player.setPlayerAccount(List.of(playerAccount));
+//        PlayerAudit playerAudit = PlayerAudit.builder()
+//                .action(AuditAction.LOGIN)
+//                .dateTime(LocalDateTime.now())
+//                .build();
+//
+////        player.setAudit(List.of(playerAudit));
+//        playerAudit.setPlayer(player);
+//
+//        playerAuditRepository.save(playerAudit);
 
-        Player player = Player.builder()
-                .username("test username 123")
-                .password("123")
-                .build();
-
-        PlayerAudit playerAudit = PlayerAudit.builder()
-                .action(AuditAction.LOGIN)
-                .dateTime(LocalDateTime.now())
-                .build();
-
-        player.setAudit(List.of(playerAudit));
-
-        playerRepository.save(player);
-
-//        playerRepository.save(player);
+        /**
+         * player подгружается лениво (ленивая загрузка, т.е. по необходимости) в playerAudit
+         * т.е. запрос на player выполнится только тогда, когда будет обращаться в коде к player,
+         * важно, нам нужен не сам player, а его поля, поэтому запрос будет происходить только при обращении к полям player
+         * через прокси реализуется механизм ленивой загрузки, т.е. когда мы ставим LAZY над сущностью (player),
+         * это означает, что в player будет хранится прокси объект на Player, поэтому
+         * getPlayer() будет возвращать прокси, привязанный к Player, а прокси в себе хранит id сущности, по которой
+         * в дальнейшем запросит всю сущностью полностью при обращении к одному из полей
+         * getId() также не трегирит запрос, потому что прокси и так хранит в себе id сущности, по которой он
+         * в дальнейшем запросит всю сущностью
+         */
+        PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
+        log.info("after playerAudit query");
+        Player player = playerAudit.getPlayer();
+        log.info("after getting player");
+        Integer playerId = player.getId();
+        log.info("after getting playerId");
+        String playerName = player.getName();
+        log.info("after getting playerName");
     }
 
     /**

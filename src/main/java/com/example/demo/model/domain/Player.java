@@ -8,15 +8,15 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Table(name = "player")
-@Entity
-@Data
 /**
  * Сущность - пользователь
  */
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
+@Entity
+@Table(name = "player")
 public class Player {
     /**
      * id, генерируемый при вставке экземпляра класса в БД

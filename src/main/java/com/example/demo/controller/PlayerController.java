@@ -31,6 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlayerController {
     private final PlayerService playerService;
 
+    @GetMapping("/test")
+    public void test(){
+        playerService.test();
+    }
+
     @Operation(summary = "Создание пользователя")
     @PostMapping
     public PlayerReadDto createPlayer(
