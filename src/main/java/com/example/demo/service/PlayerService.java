@@ -16,12 +16,16 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,6 +42,7 @@ public class PlayerService {
     private final EntityManager entityManager;
     private final PlayerAuditRepository playerAuditRepository;
     private final TestService testService;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Transactional
     public void test(){
@@ -82,14 +87,34 @@ public class PlayerService {
          * getId() также не трегирит запрос, потому что прокси и так хранит в себе id сущности, по которой он
          * в дальнейшем запросит всю сущностью
          */
+//        PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
+//        playerAudit.getPlayer();
+
+/*        Player player = playerRepository.findById(16).get();
+        List<PlayerAudit> audit = player.getAudit();*/
+//        PlayerAudit first = audit.getFirst();
+
+//        Optional<Player> testName = playerRepository.findByUsername("test username 123");
+//        System.out.println();
+
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("username", "test username 123");
+//        List<Player> players = jdbcTemplate.query(
+//                "SELECT * FROM player WHERE username = :username" ,
+//                params ,
+//                (rs , rowNum) -> {
+//                    return Player.builder()
+//                            .id(rs.getInt("id"))
+//                            .name(rs.getString("name"))
+//                            .username(rs.getString("username"))
+//                            .password(rs.getString("password"))
+//                            .build();
+//                }
+//        );
+//        System.out.println(players);
+
         PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
-        log.info("after playerAudit query");
-        Player player = playerAudit.getPlayer();
-        log.info("after getting player");
-        Integer playerId = player.getId();
-        log.info("after getting playerId");
-        String playerName = player.getName();
-        log.info("after getting playerName");
+        playerAudit.getPlayer().getUsername();
     }
 
     /**

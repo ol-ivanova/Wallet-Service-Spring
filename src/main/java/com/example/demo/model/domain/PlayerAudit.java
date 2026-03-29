@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "player_audit")
-@ToString(exclude = "player")
 public class PlayerAudit {
     /**
      * id лога, генерируемый при вставке экземпляра класса в БД
@@ -47,6 +46,6 @@ public class PlayerAudit {
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "player_id")
-//    @ToString.Exclude
+    @ToString.Exclude
     private Player player;
 }
