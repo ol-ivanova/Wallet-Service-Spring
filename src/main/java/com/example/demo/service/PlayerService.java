@@ -118,6 +118,39 @@ public class PlayerService {
     }
 
     /**
+     * если нет update запроса, но есть сеттер, то flush выполнится при коммите транзакции
+     * если есть @Query перед сеттером, то перед выполнением @Query выполнится автоматический flush
+     * также flush выполнеится, если руками его вызвать на сессии
+     *
+     * flush - отправляет запрос в БД, вписывает данные в поля, но фиксируются данные (или записываются) только
+     * при коммите транзакции
+     *
+     * в postgres по умолчанию включен уровень READ COMMITTED
+     *
+     * clearAutomatically: true
+     * findByUsername - не кеширует запросы, а постоянно идет в БД за ними
+     * с помощью updatePlayer мы отправляем запрос, вписываем данные в БД, но не фиксируем их, т.е. данные в БД пока не изменятся
+     * а второй findByUsername делает запрос именно в БД, но т.к. не произошел коммит транзакции, данные в БД не изменятся,
+     * и запрос вернет те же данные
+     *
+     * вне зависимости от того, что любые запросе кроме findById не кешируются, все равно
+     * запросы отличные от него выполняются, но сначала идут в кеш и если там нет, то идут в БД
+     */
+    @Transactional
+    public void update(){
+//        Player player = playerRepository.findById(1).get();
+//        player.setUsername("new username123456");
+//        playerRepository.updatePlayer(1, "123");
+//        Player playerAgain = playerRepository.findById(1).get();
+//        System.out.println();
+
+        Player player = playerRepository.findByUsername("new username123456").get();
+        playerRepository.updatePlayer(1, "753");
+        Player playerAgain = playerRepository.findByUsername("new username123456").get();
+        System.out.println();
+    }
+
+    /**
      * только findById реально кешируется в PC, все остальные запросы (ex findByGuid, findByUsername и т д)- нет,
      * но при этом они также попадают в PC, т.е. будут проассоциированы с сессией и можно производить какие-либо манипуляции с ними
      */
