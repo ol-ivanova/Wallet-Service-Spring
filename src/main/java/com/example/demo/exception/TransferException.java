@@ -1,4 +1,4 @@
-package com.example.demo.model.exception;
+package com.example.demo.exception;
 
 /**
  * Exception для транзакций

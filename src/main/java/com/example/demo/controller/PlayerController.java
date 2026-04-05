@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -38,9 +41,10 @@ public class PlayerController {
 
     @Operation(summary = "Создание пользователя")
     @PostMapping
-    public PlayerReadDto createPlayer(
+//    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResponseEntity<PlayerReadDto> createPlayer(
             @RequestBody PlayerCreateDto playerCreateDto){
-        return playerService.createPlayer(playerCreateDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(playerCreateDto));
     }
 
     @Operation(summary = "Авторизация пользователя")
@@ -77,6 +81,7 @@ public class PlayerController {
 
     @Operation(summary = "Удаление пользователя")
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(
             @Parameter(description = "ID пользователя")
             @PathVariable Integer id){

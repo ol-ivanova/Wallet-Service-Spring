@@ -1,16 +1,25 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.domain.Player;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
-//    Optional<Player> findByUsername(String username);
+    /**
+     * @EntityGraph(attributePaths = "audit") говорит о том, что нужно связанные записи playerAudit подтягивать как left join
+     * для предотвращения N+1 проблемы
+     */
+    @Override
+    @EntityGraph(attributePaths = "audit")
+    List<Player> findAll();
+    //    Optional<Player> findByUsername(String username);
 
     /*
     @Query(nativeQuery = true, value = """

@@ -2,32 +2,23 @@ package com.example.demo.service;
 
 import com.example.demo.mapper.PlayerMapper;
 import com.example.demo.model.domain.Player;
-import com.example.demo.model.domain.PlayerAccount;
 import com.example.demo.model.domain.PlayerAudit;
 import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.PlayerReadDto;
 
-import com.example.demo.model.enums.AuditAction;
-import com.example.demo.model.exception.PlayerException;
+import com.example.demo.exception.PlayerException;
 import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -148,6 +139,15 @@ public class PlayerService {
         playerRepository.updatePlayer(1, "753");
         Player playerAgain = playerRepository.findByUsername("new username123456").get();
         System.out.println();
+    }
+
+    public void testNplusOne(){
+        List<Player> player = playerRepository.findAll();
+        for (Player p : player) {
+            for (PlayerAudit pa : p.getAudit()){
+                log.debug("{} - {}", pa.getId(), pa.getAction());
+            }
+        }
     }
 
     /**
