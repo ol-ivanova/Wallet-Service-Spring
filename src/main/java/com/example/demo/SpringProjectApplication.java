@@ -13,6 +13,6 @@ public class SpringProjectApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SpringProjectApplication.class, args);
         PlayerService playerService = context.getBean(PlayerService.class);
-        playerService.update();
+        playerService.firstFind();
     }
 }
