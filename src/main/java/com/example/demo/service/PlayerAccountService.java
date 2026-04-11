@@ -9,13 +9,19 @@ import com.example.demo.exception.PlayerAccountException;
 import com.example.demo.exception.TransferException;
 import com.example.demo.repository.PlayerAccountRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PlayerAccountService {
@@ -56,14 +62,21 @@ public class PlayerAccountService {
      * @param accountNumber - номер счета
      * @return - dto объект класса PlayerAccountReadDto
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PlayerAccountReadDto findPlayerAccountByAccountNumber(UUID accountNumber){
+        if (TransactionSynchronizationManager.isActualTransactionActive()){
+            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
+            log.info("Transaction: isNew = {}, name = {}", transactionStatus.isNewTransaction(), transactionStatus.getTransactionName());
+        } else {
+            log.info("There is no active transaction");
+        }
         PlayerAccount playerAccount = playerAccountRepository.findById(accountNumber)
                 .orElseThrow(() -> new PlayerAccountException("Аккаунт не найден"));
-        PlayerAuditCreateDto playerAuditCreateDto = PlayerAuditCreateDto.builder()
-                .player(playerAccount.getPlayer())
-                .action(AuditAction.LOGIN)
-                .build();
-        playerAuditService.createAudit(playerAuditCreateDto);
+//        PlayerAuditCreateDto playerAuditCreateDto = PlayerAuditCreateDto.builder()
+//                .player(playerAccount.getPlayer())
+//                .action(AuditAction.LOGIN)
+//                .build();
+//        playerAuditService.createAudit(playerAuditCreateDto);
         PlayerAccountReadDto playerAccountReadDto = playerAccountMapper.playerAccountToDto(playerAccount);
         return playerAccountReadDto;
 

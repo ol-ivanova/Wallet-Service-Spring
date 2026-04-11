@@ -16,9 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -141,6 +147,33 @@ public class PlayerService {
         System.out.println();
     }
 
+    @Transactional
+    public void firstFind(){
+        if (TransactionSynchronizationManager.isActualTransactionActive()){
+            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
+            log.info("Transaction: isNew = {}, name = {}", transactionStatus.isNewTransaction(), transactionStatus.getTransactionName());
+        } else {
+            log.info("There is no active transaction");
+        }
+
+        Optional<Player> byId = playerRepository.findById(1);
+//        playerAccountService.findPlayerAccountByAccountNumber(UUID.fromString("5637fe66-047c-41f3-b8db-9ae061926805"));
+        secondFind();
+    }
+
+    /**
+     * вне зависимости от настройки propagation транзакция в рамках одного сервиса, т.е. одного прокси, наследуется
+     */
+    @Transactional
+    public void secondFind(){
+        if (TransactionSynchronizationManager.isActualTransactionActive()){
+            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
+            log.info("Transaction: isNew = {}, name = {}", transactionStatus.isNewTransaction(), transactionStatus.getTransactionName());
+        } else {
+            log.info("There is no active transaction");
+        }
+    }
+
     public void testNplusOne(){
         List<Player> player = playerRepository.findAll();
         for (Player p : player) {
@@ -160,6 +193,8 @@ public class PlayerService {
 
         return playerRepository.findById(id).get();
     }
+
+
 
     /**
      * Метод для создания пользователя
