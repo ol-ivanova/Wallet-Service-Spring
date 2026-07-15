@@ -6,6 +6,8 @@ import com.example.demo.model.dto.PlayerReadDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
+import java.util.List;
+
 /**
  * Интерфейс-mapper для Player
  */
@@ -24,4 +26,6 @@ public interface PlayerMapper {
      * @return - dto объект класса PlayerReadDto
      */
     PlayerReadDto playerToDto(Player player);
+
+    List<PlayerReadDto> domainsToDtos(List<Player> players);
 }

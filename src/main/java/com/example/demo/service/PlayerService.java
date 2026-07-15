@@ -2,18 +2,25 @@ package com.example.demo.service;
 
 import com.example.demo.mapper.PlayerMapper;
 import com.example.demo.model.domain.Player;
+import com.example.demo.model.domain.PlayerAccount;
 import com.example.demo.model.domain.PlayerAudit;
 import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.PlayerReadDto;
 
 import com.example.demo.exception.PlayerException;
+import com.example.demo.model.params.PageableParams;
+import com.example.demo.repository.PlayerAccountRepository;
 import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -40,9 +47,24 @@ public class PlayerService {
     private final PlayerAuditRepository playerAuditRepository;
     private final TestService testService;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final PlayerAccountRepository playerAccountRepository;
 
     @Transactional
     public void test(){
+//        Player player = playerRepository.findById(1).get();
+
+        PlayerAccount playerAccount = playerAccountRepository.findPlayerAccountByAccountNumber(UUID.fromString("da2ba9e3-fde6-47ab-94c2-96bd6db9d91b"));
+//        playerAccountRepository.delete(playerAccount);
+
+        Player player = Player.builder()
+                .name("Artur")
+                .username("test")
+                .password("test")
+                .build();
+
+        playerAccount.setPlayer(player);
+        playerAccountRepository.save(playerAccount);
+
 //        Player player = Player.builder()
 //                .id(3)
 //                .name("Artur")
@@ -110,8 +132,8 @@ public class PlayerService {
 //        );
 //        System.out.println(players);
 
-        PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
-        playerAudit.getPlayer().getUsername();
+//        PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
+//        playerAudit.getPlayer().getUsername();
     }
 
     /**
@@ -271,5 +293,42 @@ public class PlayerService {
     @Transactional
     public void deletePlayerById(int id){
         playerRepository.deleteById(id);
+    }
+
+    /**
+     * Почти всегда фронт запрашивает не все записи сразу, т.к. их может быть тысячи/миллионы
+     * запрашивают по какому-то limit, offset, а также sortColumn, direction
+     * соответственно эти же данные нужно возвращать на фронт: limit, offset, total
+     */
+    public List<PlayerReadDto> findAllSlice(int limit, int offset) {
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by("id"));
+
+        // Animal lion = new Lion()
+        Slice<Player> slice = playerRepository.findSlice(pageRequest);
+        slice.forEach(System.out::println);
+        System.out.println(slice.getNumber());
+        System.out.println(slice.getSize());
+        System.out.println(slice.getPageable());
+
+        return playerMapper.domainsToDtos(slice.getContent());
+    }
+
+    public List<PlayerReadDto> findAllPage(PageableParams params) {
+
+        PageRequest pageRequest = PageRequest.of(
+                params.getOffset(),
+                params.getLimit(),
+                Sort.by(Sort.Direction.fromString(params.getDirection()), params.getSortColumn())
+        );
+
+        Page<Player> page = playerRepository.findAll(pageRequest);
+        page.forEach(System.out::println);
+        log.info("totalPages: {}", page.getTotalPages());
+        log.info("totalElements: {}", page.getTotalElements());
+        log.info("number: {}", page.getNumber()); // page
+        log.info("size: {}", page.getSize()); // limit
+        log.info("numberOfElements: {}", page.getNumberOfElements()); // limit
+
+        return playerMapper.domainsToDtos(page.getContent());
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.PlayerReadDto;
+import com.example.demo.model.params.PageableParams;
 import com.example.demo.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @RestController = @Controller + @ResponseBody
@@ -45,6 +48,11 @@ public class PlayerController {
     public ResponseEntity<PlayerReadDto> createPlayer(
             @RequestBody PlayerCreateDto playerCreateDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(playerCreateDto));
+    }
+
+    @GetMapping("/all")
+    public List<PlayerReadDto> findAll(PageableParams params){
+        return playerService.findAllPage(params);
     }
 
     @Operation(summary = "Авторизация пользователя")

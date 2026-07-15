@@ -1,10 +1,7 @@
 package com.example.demo.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,11 +33,12 @@ public class PlayerAccount {
     /**
      * id пользователя, к которому привязан аккаунт
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "player_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JoinColumn (name = "player_id")
+    @ToString.Exclude
     private Player player;
-    @Column(name = "player_id")
-    private Integer playerId;
+//    @Column(name = "player_id")
+//    private Integer playerId;
 
     /**
      * Транзакции счета. Лист отправителей

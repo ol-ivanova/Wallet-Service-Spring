@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.mapper.PlayerAuditMapper;
 import com.example.demo.model.domain.PlayerAudit;
 import com.example.demo.model.dto.PlayerAuditCreateDto;
+import com.example.demo.model.dto.PlayerAuditReadDto;
 import com.example.demo.repository.PlayerAuditRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class PlayerAuditService {
      */
     @Transactional
     public void createAudit(PlayerAuditCreateDto playerAuditCreateDto){
-       playerAuditRepository.save(playerAuditMapper.dtoToPlayerAudit(playerAuditCreateDto));
+       playerAuditRepository.save(playerAuditMapper.dtoToDomain(playerAuditCreateDto));
     }
 
     /**
@@ -34,5 +35,11 @@ public class PlayerAuditService {
     public List<PlayerAudit> findAuditByPlayerId(int playerId){
         PlayerAudit playerAudit1 = playerAuditRepository.findById(playerId).get();
         return List.of(playerAudit1);
+    }
+
+    public List<PlayerAuditReadDto> findAll() {
+        List<PlayerAudit> playerAudits = playerAuditRepository.findAll();
+        List<PlayerAuditReadDto> playerAuditReadDtos = playerAuditMapper.domainsToDtos(playerAudits);
+        return playerAuditReadDtos;
     }
 }
