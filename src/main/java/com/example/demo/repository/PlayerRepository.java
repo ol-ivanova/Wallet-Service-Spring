@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.domain.Player;
+import com.example.demo.model.dto.PlayerReadDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -27,6 +28,14 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
 
     @Query("SELECT p FROM Player p")
     Slice<Player> findSlice(Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = "audit")
+    Page<Player> findAll(Pageable pageable);
+
+    @Query("""
+    """)
+    List<PlayerReadDto> findAllManual();
 
     /*
     @Query(nativeQuery = true, value = """

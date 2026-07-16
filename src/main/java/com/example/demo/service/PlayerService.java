@@ -10,6 +10,7 @@ import com.example.demo.model.dto.PlayerReadDto;
 
 import com.example.demo.exception.PlayerException;
 import com.example.demo.model.params.PageableParams;
+import com.example.demo.model.params.PageableResult;
 import com.example.demo.repository.PlayerAccountRepository;
 import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
@@ -17,10 +18,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -313,7 +311,11 @@ public class PlayerService {
         return playerMapper.domainsToDtos(slice.getContent());
     }
 
-    public List<PlayerReadDto> findAllPage(PageableParams params) {
+    /**
+     * Pageable - PageRequest
+     * Page - PageImpl
+     */
+    public Page<PlayerReadDto> findAllPage(PageableParams params) {
 
         PageRequest pageRequest = PageRequest.of(
                 params.getOffset(),
@@ -322,6 +324,8 @@ public class PlayerService {
         );
 
         Page<Player> page = playerRepository.findAll(pageRequest);
+        page.getContent().forEach(player -> log.info("player.id: {} , player.audit: {}", player.getId(), player.getAudit()));
+
         page.forEach(System.out::println);
         log.info("totalPages: {}", page.getTotalPages());
         log.info("totalElements: {}", page.getTotalElements());
@@ -329,6 +333,17 @@ public class PlayerService {
         log.info("size: {}", page.getSize()); // limit
         log.info("numberOfElements: {}", page.getNumberOfElements()); // limit
 
-        return playerMapper.domainsToDtos(page.getContent());
+        //        return new PageableResult<>(
+//                playerMapper.domainsToDtos(page.getContent()),
+//                params.getOffset(),
+//                params.getLimit(),
+//                page.getTotalElements()
+//        );
+
+        return new PageImpl<>(playerMapper.domainsToDtos(page.getContent()), pageRequest, page.getTotalPages());
+    }
+
+    public List<PlayerReadDto> findAll() {
+        return playerRepository.findAllManual();
     }
 }

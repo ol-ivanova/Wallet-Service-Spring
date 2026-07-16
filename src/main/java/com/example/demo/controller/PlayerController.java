@@ -1,14 +1,17 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.domain.Player;
 import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerCreateDto;
 import com.example.demo.model.dto.PlayerReadDto;
 import com.example.demo.model.params.PageableParams;
+import com.example.demo.model.params.PageableResult;
 import com.example.demo.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -51,8 +54,20 @@ public class PlayerController {
     }
 
     @GetMapping("/all")
-    public List<PlayerReadDto> findAll(PageableParams params){
-        return playerService.findAllPage(params);
+    public PageableResult<List<PlayerReadDto>> findAll(PageableParams params){
+        Page<PlayerReadDto> allPlayers = playerService.findAllPage(params);
+        return new PageableResult<>(
+                allPlayers.getContent(),
+                params.getOffset(),
+                params.getLimit(),
+                allPlayers.getTotalElements()
+        );
+    }
+
+
+    @GetMapping("/all-manual")
+    public List<PlayerReadDto> findAllManual(){
+        return playerService.findAllManual();
     }
 
     @Operation(summary = "Авторизация пользователя")
