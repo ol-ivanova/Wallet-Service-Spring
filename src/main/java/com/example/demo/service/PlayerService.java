@@ -343,7 +343,7 @@ public class PlayerService {
         return new PageImpl<>(playerMapper.domainsToDtos(page.getContent()), pageRequest, page.getTotalPages());
     }
 
-    public List<PlayerReadDto> findAll() {
-        return playerRepository.findAllManual();
-    }
+//    public List<PlayerReadDto> findAll() {
+//        return playerRepository.findAllManual();
+//    }
 }

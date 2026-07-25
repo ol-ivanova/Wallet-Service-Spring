@@ -65,10 +65,10 @@ public class PlayerController {
     }
 
 
-    @GetMapping("/all-manual")
-    public List<PlayerReadDto> findAllManual(){
-        return playerService.findAllManual();
-    }
+//    @GetMapping("/all-manual")
+//    public List<PlayerReadDto> findAllManual(){
+//        return playerService.findAllManual();
+//    }
 
     @Operation(summary = "Авторизация пользователя")
     @GetMapping

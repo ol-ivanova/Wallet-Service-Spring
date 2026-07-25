@@ -24,6 +24,12 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+app:
+  integration:
+    currency-dictionary:
+      client:
+        url: https://www.cbr-xml-daily.ru/daily_json.js
+
 logging:
   level:
     org:

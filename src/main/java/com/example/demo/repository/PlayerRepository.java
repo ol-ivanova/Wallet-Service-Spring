@@ -33,9 +33,9 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     @EntityGraph(attributePaths = "audit")
     Page<Player> findAll(Pageable pageable);
 
-    @Query("""
-    """)
-    List<PlayerReadDto> findAllManual();
+//    @Query("""
+//    """)
+//    List<PlayerReadDto> findAllManual();
 
     /*
     @Query(nativeQuery = true, value = """
