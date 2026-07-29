@@ -12,6 +12,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public JwtResponseDto authenticate(JwtRequestDto requestDto) {
-
+        return new JwtResponseDto();
     }
 }
