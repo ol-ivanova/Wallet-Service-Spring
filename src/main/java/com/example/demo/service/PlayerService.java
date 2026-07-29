@@ -10,7 +10,6 @@ import com.example.demo.model.dto.PlayerReadDto;
 
 import com.example.demo.exception.PlayerException;
 import com.example.demo.model.params.PageableParams;
-import com.example.demo.model.params.PageableResult;
 import com.example.demo.repository.PlayerAccountRepository;
 import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -43,7 +41,6 @@ public class PlayerService {
     private final Session session;
     private final EntityManager entityManager;
     private final PlayerAuditRepository playerAuditRepository;
-    private final TestService testService;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final PlayerAccountRepository playerAccountRepository;
 
@@ -341,6 +338,10 @@ public class PlayerService {
 //        );
 
         return new PageImpl<>(playerMapper.domainsToDtos(page.getContent()), pageRequest, page.getTotalPages());
+    }
+
+    public Optional<Player> findPlayerByUsername(String username) {
+        return playerRepository.findByUsername(username);
     }
 
 //    public List<PlayerReadDto> findAll() {
