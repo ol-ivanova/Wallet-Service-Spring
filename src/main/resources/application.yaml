@@ -15,6 +15,10 @@ spring:
       enable_lazy_load_no_trans: false
     show-sql: true
     open-in-view: false
+#  security:
+#    user:
+#      name: user
+#      password: 123
 
 springdoc:
   api-docs:

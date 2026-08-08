@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.springframework.data.domain.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,7 @@ public class PlayerService {
     private final PlayerAuditRepository playerAuditRepository;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final PlayerAccountRepository playerAccountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void test(){
@@ -240,9 +243,14 @@ public class PlayerService {
      * @return - dto объект класса PlayerReadDto
      */
     public PlayerReadDto findByCredentials(String username, String password){
-        return playerRepository.findByUsernameAndPassword(username, password)
-                .map(player -> playerMapper.playerToDto(player))
+        Player player = playerRepository.findByUsername(username)
                 .orElseThrow(() -> new PlayerException("Пользователь не найден"));
+
+        if (!passwordEncoder.matches(password, player.getPassword())) {
+            throw new PlayerException("Пользователь не найден");
+        }
+
+        return playerMapper.playerToDto(player);
     }
 
     /**

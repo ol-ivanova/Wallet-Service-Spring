@@ -20,8 +20,6 @@ public class PlayerReadDto {
     private String name;
     @Schema(description = "Логин пользователя")
     private String username;
-    @Schema(description = "Пароль пользователя")
-    private String password;
     @Schema(description = "Аккаунт(ы) пользователя")
     @Builder.Default
     private List<PlayerAccountReadDto> playerAccounts = new ArrayList<>();

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,16 +35,11 @@ import java.util.List;
  * @RestController = @Controller + @ResponseBody
  */
 @RestController
-@RequestMapping("/api/v1/player")
+@RequestMapping(value = "/api/v1/player", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Tag(name ="Пользователь", description = "Операции управления пользователями")
 public class PlayerController {
     private final PlayerService playerService;
-
-    @GetMapping("/test")
-    public void test(){
-        playerService.test();
-    }
 
     @Operation(summary = "Создание пользователя")
     @PostMapping
@@ -64,20 +60,14 @@ public class PlayerController {
         );
     }
 
-
-//    @GetMapping("/all-manual")
-//    public List<PlayerReadDto> findAllManual(){
-//        return playerService.findAllManual();
-//    }
-
     @Operation(summary = "Авторизация пользователя")
     @GetMapping
-    public PlayerReadDto authorizeUser(
+    public ResponseEntity<PlayerReadDto> authorizeUser(
             @Parameter(description = "Логин")
             @RequestParam String username,
             @Parameter(description = "Пароль")
             @RequestParam String password){
-        return playerService.findByCredentials(username, password);
+        return ResponseEntity.ok(playerService.findByCredentials(username, password));
     }
 
     /**
