@@ -4,9 +4,7 @@ import com.example.demo.mapper.PlayerMapper;
 import com.example.demo.model.domain.Player;
 import com.example.demo.model.domain.PlayerAccount;
 import com.example.demo.model.domain.PlayerAudit;
-import com.example.demo.model.dto.PlayerAccountReadDto;
-import com.example.demo.model.dto.PlayerCreateDto;
-import com.example.demo.model.dto.PlayerReadDto;
+import com.example.demo.model.dto.*;
 
 import com.example.demo.exception.PlayerException;
 import com.example.demo.model.params.PageableParams;
@@ -19,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.springframework.data.domain.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -346,6 +343,29 @@ public class PlayerService {
 //        );
 
         return new PageImpl<>(playerMapper.domainsToDtos(page.getContent()), pageRequest, page.getTotalPages());
+    }
+
+    /**
+     * Проеция бывает 2х видов:
+     * 1) класс, нативные и hql запросы +
+     * причем в случае класса, можно использовать обычную запись, а можно с помощью конструктора, но конструктор работает только с hql
+     *
+     * 2) интерфейс, нативные запросы и hql запросы +
+     *
+     * Заметка: при использовании интерфейса в hql запросах, обязательно нужно давать точные alias, соответствующие методоам интерфейса
+     *
+     * Заметка: можно помимо обычного запроса, использовать форму с конструктором, но такое можно делать только в случае класса,
+     * т.к. у интерфейса не может быть конструкторов в Java, причем в случае классов конструктор можно указывать только в hql,
+     * с нативном будет ошибка
+     */
+    public List<PlayerProjectionByInterface> findAllByInterface() {
+        List<PlayerProjectionByInterface> allManual = playerRepository.findAllByInterface();
+        return allManual;
+    }
+
+    public List<PlayerProjectionByClass> findAllByClass() {
+        List<PlayerProjectionByClass> allManual = playerRepository.findAllByClass();
+        return allManual;
     }
 
     public Optional<Player> findPlayerByUsername(String username) {

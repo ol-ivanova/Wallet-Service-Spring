@@ -5,13 +5,17 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test_schema
     username: postgres
-    password: Nol0511ok*
+    password: postgres
+#  liquibase:
+#    enabled: true
+#    change-log: "classpath:/db/changelog/db.changelog-master.yaml"
   jpa:
     properties:
       hibernate:
         format_sql: true
     hibernate:
       enable_lazy_load_no_trans: false
+#      ddl-auto: update
     show-sql: true
     open-in-view: false
 #  security:
@@ -32,9 +36,13 @@ app:
     currency-dictionary:
       client:
         url: https://www.cbr-xml-daily.ru/daily_json.js
+    oauth2:
+      client-id: Ov23liQnju3Q94P6ZXPB
+      client-secret: 9f39141792ab11e822dab4c190bc09c3a40ace31
 
 logging:
   level:
+    liquibase: DEBUG
     org:
       hibernate:
         SQL: DEBUG
