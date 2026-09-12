@@ -41,7 +41,6 @@ public class PlayerController {
 
     @Operation(summary = "Создание пользователя")
     @PostMapping
-//    @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<PlayerReadDto> createPlayer(
             @RequestBody PlayerCreateDto playerCreateDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(playerCreateDto));

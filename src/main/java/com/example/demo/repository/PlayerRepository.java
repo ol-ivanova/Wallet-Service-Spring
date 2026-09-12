@@ -34,15 +34,22 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     @EntityGraph(attributePaths = "audit")
     Page<Player> findAll(Pageable pageable);
 
+    @EntityGraph(attributePaths = "playerAccount")
     @Query(nativeQuery = false, value = """
         SELECT p.name as name, p.username as username FROM Player p
     """)
     List<PlayerProjectionByInterface> findAllByInterface();
 
+    @EntityGraph(attributePaths = "playerAccount")
     @Query(nativeQuery = false, value = """
         SELECT p.id, p.name, p.username FROM Player p
     """)
     List<PlayerProjectionByClass> findAllByClass();
+
+//    List<PlayerProjectionByClass> findAllById(Integer id);
+
+//    @EntityGraph(attributePaths = "audit")
+    List<PlayerProjectionByInterface> findAllById(Integer id);
 
     /*
     @Query(nativeQuery = true, value = """

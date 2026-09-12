@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.filter.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.*;
 
@@ -27,6 +29,8 @@ import static org.springframework.security.config.Customizer.*;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtRequestFilter jwtRequestFilter;
+
     @Value("${app.integration.oauth2.client-id}")
     private String clientId;
     @Value("${app.integration.oauth2.client-secret}")
@@ -49,6 +53,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(withDefaults())
                 .formLogin(withDefaults())
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

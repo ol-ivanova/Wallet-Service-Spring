@@ -40,6 +40,10 @@ app:
       client-id: Ov23liQnju3Q94P6ZXPB
       client-secret: 9f39141792ab11e822dab4c190bc09c3a40ace31
 
+jwt:
+  secret:
+  lifetime: 180m
+
 logging:
   level:
     liquibase: DEBUG

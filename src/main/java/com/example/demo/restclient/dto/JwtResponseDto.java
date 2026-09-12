@@ -1,13 +1,9 @@
 package com.example.demo.restclient.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
 public class JwtResponseDto {
-    private String tokenType = "Bearer";
-    private String jwt;
+    String tokenType = "Bearer";
+    String jwt;
 }
