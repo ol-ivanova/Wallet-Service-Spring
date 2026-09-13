@@ -3,6 +3,9 @@ package com.example.demo.service;
 import com.example.demo.model.domain.Player;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +16,16 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    @Value("${jwt.secret}")
-    private SecretKey jwtSecretKey;
-    @Value("${jwt.lifetime}")
-    private Duration jwtLifetime;
+//    @Value("${jwt.secret}")
+    private final SecretKey jwtSecretKey;
+//    @Value("${jwt.lifetime}")
+    private final Duration jwtLifetime;
+
+    public JwtService(@Value("${jwt.secret}") String jwtSecretKey, @Value("${jwt.lifetime}") Duration jwtLifetime) {
+        //signature
+        this.jwtSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
+        this.jwtLifetime = jwtLifetime;
+    }
 
     public String generateToken(Player player) {
         Date issuedDate = new Date();

@@ -41,7 +41,7 @@ app:
       client-secret: 9f39141792ab11e822dab4c190bc09c3a40ace31
 
 jwt:
-  secret:
+  secret: e2x+p/2EwWrCQjYEMxzI7Ovgxm61O+Av6hMxcdiZOKQ= #secret здесь рандомный, можно любые символы вписывать
   lifetime: 180m
 
 logging:

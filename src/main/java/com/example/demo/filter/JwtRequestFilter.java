@@ -1,6 +1,7 @@
 package com.example.demo.filter;
 
 import com.example.demo.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String login = jwtService.getLogin(jwt); // login будем получать из jwt токена
+        String authorizationHeader = request.getHeader("Authorization");
+        String jwt = null;
+        String login = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            jwt = authorizationHeader.substring(7);
+            try {
+                login = jwtService.getLogin(jwt); // login будем получать из jwt токена
+            } catch (ExpiredJwtException e){
+                log.debug("Время жизни токена истекло");
+            }
+        }
+
         if (login != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     login,
