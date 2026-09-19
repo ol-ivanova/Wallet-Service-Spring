@@ -30,11 +30,16 @@
 - [Apache Maven](https://maven.apache.org/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Liquibase](https://docs.liquibase.com/)
+- [Docker](https://docs.docker.com/)
 - [Swagger](https://swagger.io/)
 
 ## Запуск и использование
 
-Запуск проекта осуществляется через класс SpringProjectApplication
+Для запуска проекта проделайте следующие шаги:
+
+1. запустите файл docker-compose.yaml для поднятия окружения разработки
+2. запустите класс WalletServiceSpringApplication
+Для тестирования API, перейдите в Swagger: http://localhost:8080/swagger-ui/index.html#/
 
 ## Разработчик проекта
 
