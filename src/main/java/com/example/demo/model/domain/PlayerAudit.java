@@ -1,7 +1,6 @@
 package com.example.demo.model.domain;
 
 import com.example.demo.model.enums.AuditAction;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

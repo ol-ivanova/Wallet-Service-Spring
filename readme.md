@@ -2,11 +2,17 @@
 
 Проект сервиса, управляющего кредитными и дебетовыми транзакциями от имени пользователя. Сервис предусматривает следующий функционал:
 
+Функциональные требования:
 - регистрацию пользователя
 - авторизацию пользователя
 - дебит/кредит по счету
 - просмотр истории транзакций
 - просмотр аудита
+
+Нефункциональные требования:
+- документация в OpenAPI/Swagger 
+- реализовано логирование процессов 
+- аутентификация через JWT
 
 Приложение реализовано на Spring 4. При сборке проекта использовался фреймворк Maven. 
 
@@ -19,10 +25,11 @@
 ## Технологии
 
 - [Java 23](https://www.oracle.com/java/technologies/javase/jdk23-archive-downloads.html)
-- [Spring](https://spring.io/)
+- [Spring 4](https://spring.io/)
 - [Lombok](https://projectlombok.org/features/)
 - [Apache Maven](https://maven.apache.org/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Liquibase](https://docs.liquibase.com/)
 - [Swagger](https://swagger.io/)
 
 ## Запуск и использование

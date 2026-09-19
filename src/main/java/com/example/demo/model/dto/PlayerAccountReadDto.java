@@ -1,7 +1,5 @@
 package com.example.demo.model.dto;
 
-import com.example.demo.model.domain.Player;
-import com.example.demo.model.domain.Transaction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

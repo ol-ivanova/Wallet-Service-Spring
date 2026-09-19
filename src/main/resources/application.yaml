@@ -8,9 +8,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test_schema
     username: postgres
     password: postgres
-#  liquibase:
-#    enabled: true
-#    change-log: "classpath:/db/changelog/db.changelog-master.yaml"
   jpa:
     properties:
       hibernate:
@@ -18,13 +15,8 @@ spring:
     hibernate:
       ddl-auto: none
       enable_lazy_load_no_trans: false
-#      ddl-auto: update
     show-sql: true
     open-in-view: false
-#  security:
-#    user:
-#      name: user
-#      password: 123
 
 springdoc:
   api-docs:
@@ -34,17 +26,8 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-app:
-  integration:
-    currency-dictionary:
-      client:
-
-    oauth2:
-      client-id: Ov23liQnju3Q94P6ZXPB
-      client-secret: 9f39141792ab11e822dab4c190bc09c3a40ace31
-
 jwt:
-  secret: e2x+p/2EwWrCQjYEMxzI7Ovgxm61O+Av6hMxcdiZOKQ= #secret здесь рандомный, можно любые символы вписывать
+  secret: e2x+p/2EwWrCQjYEMxzI7Ovgxm61O+Av6hMxcdiZOKQ=
   lifetime: 180m
 
 logging:

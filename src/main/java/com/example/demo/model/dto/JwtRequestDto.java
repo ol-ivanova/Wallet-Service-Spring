@@ -1,4 +1,4 @@
-package com.example.demo.restclient.dto;
+package com.example.demo.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

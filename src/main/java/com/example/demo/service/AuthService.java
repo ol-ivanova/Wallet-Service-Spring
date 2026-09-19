@@ -2,16 +2,17 @@ package com.example.demo.service;
 
 import com.example.demo.exception.AuthException;
 import com.example.demo.model.domain.Player;
-import com.example.demo.restclient.dto.JwtRequestDto;
-import com.example.demo.restclient.dto.JwtResponseDto;
+import com.example.demo.model.dto.JwtRequestDto;
+import com.example.demo.model.dto.JwtResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
     private final AuthenticationManager authenticationManager;
@@ -38,6 +39,7 @@ public class AuthService {
         Player player = playerService.findPlayerByUsername(requestDto.getLogin()).orElse(null);
         String jwt = jwtService.generateToken(player);
 
+        log.debug("JWT token: {}", jwt);
         return new JwtResponseDto(jwt);
     }
 }

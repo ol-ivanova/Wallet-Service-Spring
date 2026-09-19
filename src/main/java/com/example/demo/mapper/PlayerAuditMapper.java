@@ -1,7 +1,6 @@
 package com.example.demo.mapper;
 
 import com.example.demo.model.domain.PlayerAudit;
-import com.example.demo.model.dto.PlayerAccountReadDto;
 import com.example.demo.model.dto.PlayerAuditCreateDto;
 import com.example.demo.model.dto.PlayerAuditReadDto;
 import org.mapstruct.Mapper;

@@ -8,16 +8,22 @@ import com.example.demo.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class PlayerService {
+public class PlayerService implements UserDetailsService {
     private final PlayerRepository playerRepository;
     private final PlayerAccountService playerAccountService;
     private final PlayerMapper playerMapper;
@@ -39,6 +45,7 @@ public class PlayerService {
         PlayerAccountReadDto playerAccountReadDto = playerAccountService.createPlayerAccount(savedPlayer);
         PlayerReadDto playerReadDto = playerMapper.playerToDto(savedPlayer);
         playerReadDto.getPlayerAccounts().add(playerAccountReadDto);
+        log.info("Player has been successfully created: {}", playerReadDto);
 
         return playerReadDto;
     }
@@ -97,4 +104,22 @@ public class PlayerService {
         return playerRepository.findByUsername(username);
     }
 
+
+    /**
+     * метод, загружающий пользователя по его логину
+     *
+     * @param username
+     * @return UserDetails - одна из реализаций UserDetails
+     * @throws UsernameNotFoundException - exception, если не удалось загрузить пользователя
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return findPlayerByUsername(username)
+                .map(player -> new User(
+                        player.getUsername(),
+                        player.getPassword(),
+                        new ArrayList<>()
+                ))
+                .orElseThrow(() -> new UsernameNotFoundException("Не удалось загрузить пользователя: %s".formatted(username)));
+    }
 }

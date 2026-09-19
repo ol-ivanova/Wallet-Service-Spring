@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Для описания схемы аутентификации в документации API, которую генерирует Swagger UI.
+ * Конфиг для OpenAPI (Swagger)
  */
 @SecurityScheme(
         name = "JWT",
@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Configuration;
         scheme = "bearer"
 )
 
-/**
- * Это же не нужно?
- */
 @Configuration
 public class OpenApiConfig {
 }

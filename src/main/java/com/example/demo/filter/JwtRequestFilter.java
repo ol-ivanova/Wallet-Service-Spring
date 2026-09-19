@@ -17,13 +17,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Класс, встраивающийся в цепочку фильтров и перекладывающий данные из токена в SecurityContext
+ * Фильтр, встраивающийся в SecurityFilterChain и перекладывающий данные из токена в SecurityContext
  */
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
+
     /**
      * метод, перекладывающий данные из токена в SecurityContext
      * @param request
@@ -35,10 +36,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
-        String jwt = null;
         String login = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
+            String jwt = authorizationHeader.substring(7);
             try {
                 login = jwtService.getLogin(jwt); // login будем получать из jwt токена
             } catch (ExpiredJwtException e){

@@ -23,11 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
-/**
- * @RestController = @Controller + @ResponseBody
- */
 @RestController
 @RequestMapping(value = "/api/v1/players", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor

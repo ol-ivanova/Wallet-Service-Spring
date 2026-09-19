@@ -1,6 +1,5 @@
 package com.example.demo.model.dto;
 
-import com.example.demo.model.domain.PlayerAccount;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

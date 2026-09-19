@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.restclient.dto.JwtRequestDto;
-import com.example.demo.restclient.dto.JwtResponseDto;
+import com.example.demo.model.dto.JwtRequestDto;
+import com.example.demo.model.dto.JwtResponseDto;
 import com.example.demo.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
