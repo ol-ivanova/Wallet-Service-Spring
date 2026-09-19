@@ -18,6 +18,11 @@ public class AuthService {
     private final PlayerService playerService;
     private final JwtService jwtService;
 
+    /**
+     * Метод аутентификации пользователя
+     * @param requestDto - dto с данными пользователя
+     * @return - jwt токен
+     */
     public JwtResponseDto authenticate(JwtRequestDto requestDto) {
         try {
             authenticationManager.authenticate(

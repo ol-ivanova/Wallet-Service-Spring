@@ -16,17 +16,19 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-//    @Value("${jwt.secret}")
     private final SecretKey jwtSecretKey;
-//    @Value("${jwt.lifetime}")
     private final Duration jwtLifetime;
 
     public JwtService(@Value("${jwt.secret}") String jwtSecretKey, @Value("${jwt.lifetime}") Duration jwtLifetime) {
-        //signature
         this.jwtSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
         this.jwtLifetime = jwtLifetime;
     }
 
+    /**
+     * Метод для генерации токена
+     * @param player - данные пользователя
+     * @return - готовый JWT-токен в виде строки
+     */
     public String generateToken(Player player) {
         Date issuedDate = new Date();
         Date expirationDate = new Date(issuedDate.getTime() + jwtLifetime.toMillis());
@@ -49,10 +51,6 @@ public class JwtService {
     public String getLogin(String jwt) {
         return getClaim(jwt, Claims::getSubject);
     }
-
-    //    public String getLogin(String jwt) {
-//        return getAllClaims(jwt).getSubject();
-//    }
 
     /**
      * generic-метод, извлекающий заданную в claimResolver информацию из токена

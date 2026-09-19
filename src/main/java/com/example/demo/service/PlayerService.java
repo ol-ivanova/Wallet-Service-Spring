@@ -2,32 +2,16 @@ package com.example.demo.service;
 
 import com.example.demo.mapper.PlayerMapper;
 import com.example.demo.model.domain.Player;
-import com.example.demo.model.domain.PlayerAccount;
-import com.example.demo.model.domain.PlayerAudit;
 import com.example.demo.model.dto.*;
-
 import com.example.demo.exception.PlayerException;
-import com.example.demo.model.params.PageableParams;
-import com.example.demo.repository.PlayerAccountRepository;
-import com.example.demo.repository.PlayerAuditRepository;
 import com.example.demo.repository.PlayerRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.springframework.data.domain.*;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -37,181 +21,7 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
     private final PlayerAccountService playerAccountService;
     private final PlayerMapper playerMapper;
-    private final Session session;
-    private final EntityManager entityManager;
-    private final PlayerAuditRepository playerAuditRepository;
-    private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final PlayerAccountRepository playerAccountRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Transactional
-    public void test(){
-//        Player player = playerRepository.findById(1).get();
-
-        PlayerAccount playerAccount = playerAccountRepository.findPlayerAccountByAccountNumber(UUID.fromString("da2ba9e3-fde6-47ab-94c2-96bd6db9d91b"));
-//        playerAccountRepository.delete(playerAccount);
-
-        Player player = Player.builder()
-                .name("Artur")
-                .username("test")
-                .password("test")
-                .build();
-
-        playerAccount.setPlayer(player);
-        playerAccountRepository.save(playerAccount);
-
-//        Player player = Player.builder()
-//                .id(3)
-//                .name("Artur")
-//                .username("test")
-//                .password("test")
-//                .build();
-//        Player player1 = entityManager.merge(player);
-
-//        Player artur = playerRepository.findById(3).get();
-//        artur.setName("Artur1");
-//        artur.setUsername("test123");
-//        entityManager.refresh(artur);
-//        System.out.println();
-
-//        Player player = Player.builder()
-//                .name("test name")
-//                .username("test username 123")
-//                .password("123")
-//                .build();
-//
-//        PlayerAudit playerAudit = PlayerAudit.builder()
-//                .action(AuditAction.LOGIN)
-//                .dateTime(LocalDateTime.now())
-//                .build();
-//
-////        player.setAudit(List.of(playerAudit));
-//        playerAudit.setPlayer(player);
-//
-//        playerAuditRepository.save(playerAudit);
-
-        /**
-         * player подгружается лениво (ленивая загрузка, т.е. по необходимости) в playerAudit
-         * т.е. запрос на player выполнится только тогда, когда будет обращаться в коде к player,
-         * важно, нам нужен не сам player, а его поля, поэтому запрос будет происходить только при обращении к полям player
-         * через прокси реализуется механизм ленивой загрузки, т.е. когда мы ставим LAZY над сущностью (player),
-         * это означает, что в player будет хранится прокси объект на Player, поэтому
-         * getPlayer() будет возвращать прокси, привязанный к Player, а прокси в себе хранит id сущности, по которой
-         * в дальнейшем запросит всю сущностью полностью при обращении к одному из полей
-         * getId() также не трегирит запрос, потому что прокси и так хранит в себе id сущности, по которой он
-         * в дальнейшем запросит всю сущностью
-         */
-//        PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
-//        playerAudit.getPlayer();
-
-/*        Player player = playerRepository.findById(16).get();
-        List<PlayerAudit> audit = player.getAudit();*/
-//        PlayerAudit first = audit.getFirst();
-
-//        Optional<Player> testName = playerRepository.findByUsername("test username 123");
-//        System.out.println();
-
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("username", "test username 123");
-//        List<Player> players = jdbcTemplate.query(
-//                "SELECT * FROM player WHERE username = :username" ,
-//                params ,
-//                (rs , rowNum) -> {
-//                    return Player.builder()
-//                            .id(rs.getInt("id"))
-//                            .name(rs.getString("name"))
-//                            .username(rs.getString("username"))
-//                            .password(rs.getString("password"))
-//                            .build();
-//                }
-//        );
-//        System.out.println(players);
-
-//        PlayerAudit playerAudit = playerAuditRepository.findById(8).get();
-//        playerAudit.getPlayer().getUsername();
-    }
-
-    /**
-     * если нет update запроса, но есть сеттер, то flush выполнится при коммите транзакции
-     * если есть @Query перед сеттером, то перед выполнением @Query выполнится автоматический flush
-     * также flush выполнеится, если руками его вызвать на сессии
-     *
-     * flush - отправляет запрос в БД, вписывает данные в поля, но фиксируются данные (или записываются) только
-     * при коммите транзакции
-     *
-     * в postgres по умолчанию включен уровень READ COMMITTED
-     *
-     * clearAutomatically: true
-     * findByUsername - не кеширует запросы, а постоянно идет в БД за ними
-     * с помощью updatePlayer мы отправляем запрос, вписываем данные в БД, но не фиксируем их, т.е. данные в БД пока не изменятся
-     * а второй findByUsername делает запрос именно в БД, но т.к. не произошел коммит транзакции, данные в БД не изменятся,
-     * и запрос вернет те же данные
-     *
-     * вне зависимости от того, что любые запросе кроме findById не кешируются, все равно
-     * запросы отличные от него выполняются, но сначала идут в кеш и если там нет, то идут в БД
-     */
-    @Transactional
-    public void update(){
-//        Player player = playerRepository.findById(1).get();
-//        player.setUsername("new username123456");
-//        playerRepository.updatePlayer(1, "123");
-//        Player playerAgain = playerRepository.findById(1).get();
-//        System.out.println();
-
-        Player player = playerRepository.findByUsername("new username123456").get();
-        playerRepository.updatePlayer(1, "753");
-        Player playerAgain = playerRepository.findByUsername("new username123456").get();
-        System.out.println();
-    }
-
-    @Transactional
-    public void firstFind(){
-        if (TransactionSynchronizationManager.isActualTransactionActive()){
-            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
-            log.info("Transaction: isNew = {}, name = {}", transactionStatus.isNewTransaction(), transactionStatus.getTransactionName());
-        } else {
-            log.info("There is no active transaction");
-        }
-
-        Optional<Player> byId = playerRepository.findById(1);
-//        playerAccountService.findPlayerAccountByAccountNumber(UUID.fromString("5637fe66-047c-41f3-b8db-9ae061926805"));
-        secondFind();
-    }
-
-    /**
-     * вне зависимости от настройки propagation транзакция в рамках одного сервиса, т.е. одного прокси, наследуется
-     */
-    @Transactional
-    public void secondFind(){
-        if (TransactionSynchronizationManager.isActualTransactionActive()){
-            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
-            log.info("Transaction: isNew = {}, name = {}", transactionStatus.isNewTransaction(), transactionStatus.getTransactionName());
-        } else {
-            log.info("There is no active transaction");
-        }
-    }
-
-    public void testNplusOne(){
-        List<Player> player = playerRepository.findAll();
-        for (Player p : player) {
-            for (PlayerAudit pa : p.getAudit()){
-                log.debug("{} - {}", pa.getId(), pa.getAction());
-            }
-        }
-    }
-
-    /**
-     * только findById реально кешируется в PC, все остальные запросы (ex findByGuid, findByUsername и т д)- нет,
-     * но при этом они также попадают в PC, т.е. будут проассоциированы с сессией и можно производить какие-либо манипуляции с ними
-     */
-    public Player findById(int id){
-        playerRepository.findByUsername("olya");
-        playerRepository.findByUsername("olya");
-
-        return playerRepository.findById(id).get();
-    }
-
-
 
     /**
      * Метод для создания пользователя
@@ -269,23 +79,6 @@ public class PlayerService {
         return playerMapper.playerToDto(updatedPlayer);
     }
 
-    @Transactional
-    public void updatePlayerTest(Integer id, PlayerCreateDto playerCreateDto){
-        Player player = playerRepository.findById(id).orElseThrow(() -> new PlayerException("Пользователь не найден"));
-        log.info("isDirty: {}", session.isDirty());
-        player.setName(playerCreateDto.getName());
-        player.setUsername(playerCreateDto.getUsername());
-        player.setPassword(playerCreateDto.getPassword());
-
-        log.info("isDirty: {}", session.isDirty());
-
-        playerRepository.flush();
-        log.info("message1");
-//        Player updatedPlayer = playerRepository.save(player);
-
-//        return playerMapper.playerToDto(updatedPlayer);
-    }
-
     /**
      * Метод для удаления пользователя
      * @param id - id пользователя
@@ -296,83 +89,12 @@ public class PlayerService {
     }
 
     /**
-     * Почти всегда фронт запрашивает не все записи сразу, т.к. их может быть тысячи/миллионы
-     * запрашивают по какому-то limit, offset, а также sortColumn, direction
-     * соответственно эти же данные нужно возвращать на фронт: limit, offset, total
+     * Метод для поиска пользователя по логину
+     * @param username - логин пользователя
+     * @return - пользователя
      */
-    public List<PlayerReadDto> findAllSlice(int limit, int offset) {
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by("id"));
-
-        // Animal lion = new Lion()
-        Slice<Player> slice = playerRepository.findSlice(pageRequest);
-        slice.forEach(System.out::println);
-        System.out.println(slice.getNumber());
-        System.out.println(slice.getSize());
-        System.out.println(slice.getPageable());
-
-        return playerMapper.domainsToDtos(slice.getContent());
-    }
-
-    /**
-     * Pageable - PageRequest
-     * Page - PageImpl
-     */
-    public Page<PlayerReadDto> findAllPage(PageableParams params) {
-
-        PageRequest pageRequest = PageRequest.of(
-                params.getOffset(),
-                params.getLimit(),
-                Sort.by(Sort.Direction.fromString(params.getDirection()), params.getSortColumn())
-        );
-
-        Page<Player> page = playerRepository.findAll(pageRequest);
-        page.getContent().forEach(player -> log.info("player.id: {} , player.audit: {}", player.getId(), player.getAudit()));
-
-        page.forEach(System.out::println);
-        log.info("totalPages: {}", page.getTotalPages());
-        log.info("totalElements: {}", page.getTotalElements());
-        log.info("number: {}", page.getNumber()); // page
-        log.info("size: {}", page.getSize()); // limit
-        log.info("numberOfElements: {}", page.getNumberOfElements()); // limit
-
-        //        return new PageableResult<>(
-//                playerMapper.domainsToDtos(page.getContent()),
-//                params.getOffset(),
-//                params.getLimit(),
-//                page.getTotalElements()
-//        );
-
-        return new PageImpl<>(playerMapper.domainsToDtos(page.getContent()), pageRequest, page.getTotalPages());
-    }
-
-    /**
-     * Проеция бывает 2х видов:
-     * 1) класс, нативные и hql запросы +
-     * причем в случае класса, можно использовать обычную запись, а можно с помощью конструктора, но конструктор работает только с hql
-     *
-     * 2) интерфейс, нативные запросы и hql запросы +
-     *
-     * Заметка: при использовании интерфейса в hql запросах, обязательно нужно давать точные alias, соответствующие методоам интерфейса
-     *
-     * Заметка: можно помимо обычного запроса, использовать форму с конструктором, но такое можно делать только в случае класса,
-     * т.к. у интерфейса не может быть конструкторов в Java, причем в случае классов конструктор можно указывать только в hql,
-     * с нативном будет ошибка
-     */
-    public List<PlayerProjectionByInterface> findAllByInterface() {
-        List<PlayerProjectionByInterface> allManual = playerRepository.findAllByInterface();
-        return allManual;
-    }
-
-    public List<PlayerProjectionByClass> findAllByClass() {
-        List<PlayerProjectionByClass> allManual = playerRepository.findAllByClass();
-        return allManual;
-    }
-
     public Optional<Player> findPlayerByUsername(String username) {
         return playerRepository.findByUsername(username);
     }
 
-//    public List<PlayerReadDto> findAll() {
-//        return playerRepository.findAllManual();
-//    }
 }

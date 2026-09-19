@@ -1,18 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.dto.PlayerCreateDto;
-import com.example.demo.model.dto.PlayerProjectionByClass;
-import com.example.demo.model.dto.PlayerProjectionByInterface;
 import com.example.demo.model.dto.PlayerReadDto;
-import com.example.demo.model.params.PageableParams;
-import com.example.demo.model.params.PageableResult;
 import com.example.demo.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,27 +41,6 @@ public class PlayerController {
     public ResponseEntity<PlayerReadDto> createPlayer(
             @RequestBody PlayerCreateDto playerCreateDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(playerCreateDto));
-    }
-
-    @GetMapping("/all")
-    public PageableResult<List<PlayerReadDto>> findAll(PageableParams params){
-        Page<PlayerReadDto> allPlayers = playerService.findAllPage(params);
-        return new PageableResult<>(
-                allPlayers.getContent(),
-                params.getOffset(),
-                params.getLimit(),
-                allPlayers.getTotalElements()
-        );
-    }
-
-    @GetMapping("/interface")
-    public ResponseEntity<List<PlayerProjectionByInterface>> findAllByInterface(){
-        return ResponseEntity.ok(playerService.findAllByInterface());
-    }
-
-    @GetMapping("/class")
-    public ResponseEntity<List<PlayerProjectionByClass>> findAllByClass(){
-        return ResponseEntity.ok(playerService.findAllByClass());
     }
 
     @Operation(summary = "Авторизация пользователя")

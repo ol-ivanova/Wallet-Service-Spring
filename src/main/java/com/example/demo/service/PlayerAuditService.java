@@ -37,6 +37,10 @@ public class PlayerAuditService {
         return List.of(playerAudit1);
     }
 
+    /**
+     * Метод для поиска аудита всех пользователей
+     * @return - список аудита
+     */
     public List<PlayerAuditReadDto> findAll() {
         List<PlayerAudit> playerAudits = playerAuditRepository.findAll();
         List<PlayerAuditReadDto> playerAuditReadDtos = playerAuditMapper.domainsToDtos(playerAudits);

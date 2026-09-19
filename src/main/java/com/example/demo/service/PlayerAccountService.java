@@ -72,11 +72,6 @@ public class PlayerAccountService {
         }
         PlayerAccount playerAccount = playerAccountRepository.findById(accountNumber)
                 .orElseThrow(() -> new PlayerAccountException("Аккаунт не найден"));
-//        PlayerAuditCreateDto playerAuditCreateDto = PlayerAuditCreateDto.builder()
-//                .player(playerAccount.getPlayer())
-//                .action(AuditAction.LOGIN)
-//                .build();
-//        playerAuditService.createAudit(playerAuditCreateDto);
         PlayerAccountReadDto playerAccountReadDto = playerAccountMapper.playerAccountToDto(playerAccount);
         return playerAccountReadDto;
 

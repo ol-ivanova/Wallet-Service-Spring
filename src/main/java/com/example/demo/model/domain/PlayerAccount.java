@@ -37,8 +37,6 @@ public class PlayerAccount {
     @JoinColumn (name = "player_id")
     @ToString.Exclude
     private Player player;
-//    @Column(name = "player_id")
-//    private Integer playerId;
 
     /**
      * Транзакции счета. Лист отправителей

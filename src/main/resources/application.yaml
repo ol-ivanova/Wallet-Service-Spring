@@ -1,3 +1,5 @@
+server:
+  port: 8081
 spring:
   application:
     name: SpringProject
@@ -14,6 +16,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
+      ddl-auto: none
       enable_lazy_load_no_trans: false
 #      ddl-auto: update
     show-sql: true
@@ -35,7 +38,7 @@ app:
   integration:
     currency-dictionary:
       client:
-        url: https://www.cbr-xml-daily.ru/daily_json.js
+
     oauth2:
       client-id: Ov23liQnju3Q94P6ZXPB
       client-secret: 9f39141792ab11e822dab4c190bc09c3a40ace31

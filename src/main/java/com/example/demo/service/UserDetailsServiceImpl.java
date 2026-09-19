@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      *
      * @param username
      * @return UserDetails - одна из реализаций UserDetails
-     * @throws UsernameNotFoundException - exception, если не удалось загнрузить пользователя
+     * @throws UsernameNotFoundException - exception, если не удалось загрузить пользователя
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

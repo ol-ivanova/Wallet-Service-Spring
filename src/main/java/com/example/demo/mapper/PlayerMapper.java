@@ -29,6 +29,4 @@ public interface PlayerMapper {
      * @return - dto объект класса PlayerReadDto
      */
     PlayerReadDto playerToDto(Player player);
-
-    List<PlayerReadDto> domainsToDtos(List<Player> players);
 }

@@ -42,10 +42,6 @@ public class Player {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-//    private LocalDate birthDate;
-//    private Integer age;
-
-    //    private Birthday birthDate;
     /**
      * Пароль игрока
      */

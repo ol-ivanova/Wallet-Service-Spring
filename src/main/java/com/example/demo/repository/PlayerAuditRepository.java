@@ -11,9 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface PlayerAuditRepository extends JpaRepository<PlayerAudit, Integer> {
-//    @Override
-//    @EntityGraph(attributePaths = "player")
-//    Optional<PlayerAudit> findById(Integer integer);
 
     List<PlayerAudit> findAllByPlayer(Player player);
 
