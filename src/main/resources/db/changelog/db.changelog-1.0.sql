@@ -23,6 +23,7 @@ CREATE TABLE player_audit
     id        SERIAL PRIMARY KEY,
     action    VARCHAR(255) NOT NULL,
     date_time TIMESTAMP,
+    entity_name VARCHAR(255) NOT NULL,
     player_id INT REFERENCES player (id)
 );
 

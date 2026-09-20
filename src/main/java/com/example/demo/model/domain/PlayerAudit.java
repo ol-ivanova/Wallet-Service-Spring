@@ -1,6 +1,7 @@
 package com.example.demo.model.domain;
 
 import com.example.demo.model.enums.AuditAction;
+import com.example.demo.model.enums.AuditEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,9 @@ public class PlayerAudit {
      */
     @Enumerated(EnumType.STRING)
     private AuditAction action;
+
+    @Enumerated(EnumType.STRING)
+    private AuditEntity entityName;
 
     /**
      * id пользователя, к которому привязана активность

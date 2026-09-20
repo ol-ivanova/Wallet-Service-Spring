@@ -9,8 +9,7 @@ public enum AuditAction {
      */
     LOGIN,
 
-    /**
-     * выход
-     */
-    LOGOUT;
+    CREATE,
+    UPDATE,
+    DELETE
 }

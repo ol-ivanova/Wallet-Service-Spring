@@ -7,9 +7,11 @@ import com.example.demo.model.dto.*;
 import com.example.demo.model.enums.AuditAction;
 import com.example.demo.exception.PlayerAccountException;
 import com.example.demo.exception.TransferException;
+import com.example.demo.model.enums.AuditEntity;
 import com.example.demo.repository.PlayerAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,8 +29,8 @@ import java.util.UUID;
 public class PlayerAccountService {
     private final PlayerAccountRepository playerAccountRepository;
     private final PlayerAccountMapper playerAccountMapper;
-    private final PlayerAuditService playerAuditService;
     private final TransactionService transactionService;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Метод для создания аккаунта пользователя
@@ -42,6 +44,9 @@ public class PlayerAccountService {
                 .player(player)
                 .build();
         PlayerAccount savedPlayerAccount = playerAccountRepository.save(playerAccount);
+
+        publishAuditEvent(AuditAction.CREATE, AuditEntity.PLAYER_ACCOUNT, playerAccount.getPlayer());
+
         return playerAccountMapper.playerAccountToDto(savedPlayerAccount);
     }
 
@@ -54,6 +59,9 @@ public class PlayerAccountService {
     public PlayerAccountReadDto createPlayerAccount(PlayerAccountCreateDto playerAccountCreateDto){
         PlayerAccount playerAccount = playerAccountMapper.dtoToPlayerAccount(playerAccountCreateDto);
         PlayerAccount savedPlayerAccount = playerAccountRepository.save(playerAccount);
+
+        publishAuditEvent(AuditAction.CREATE, AuditEntity.PLAYER_ACCOUNT, playerAccount.getPlayer());
+
         return playerAccountMapper.playerAccountToDto(savedPlayerAccount);
     }
 
@@ -90,6 +98,8 @@ public class PlayerAccountService {
 
         playerAccount.setBalance(playerAccountCreateDto.getBalance());
 
+        publishAuditEvent(AuditAction.UPDATE, AuditEntity.PLAYER_ACCOUNT, playerAccount.getPlayer());
+
         return playerAccountMapper.playerAccountToDto(playerAccountRepository.save(playerAccount));
     }
 
@@ -99,7 +109,10 @@ public class PlayerAccountService {
      */
     @Transactional
     public void deletePlayerAccountByAccountNumber(UUID accountNumber){
-        playerAccountRepository.deleteById(accountNumber);
+        PlayerAccount playerAccount = playerAccountRepository.findPlayerAccountByAccountNumber(accountNumber);
+        playerAccountRepository.delete(playerAccount);
+
+        publishAuditEvent(AuditAction.DELETE, AuditEntity.PLAYER_ACCOUNT, playerAccount.getPlayer());
     }
 
     /**
@@ -142,5 +155,14 @@ public class PlayerAccountService {
         playerAccountTo.setBalance(playerAccountTo.getBalance().add(transactionCreateDto.getSum()));
 
         transactionService.transferData(transactionCreateDto);
+    }
+
+    private void publishAuditEvent(AuditAction action, AuditEntity entity, Player player) {
+        PlayerAuditEvent audit = PlayerAuditEvent.builder()
+                .action(action)
+                .entityName(entity)
+                .player(player)
+                .build();
+        eventPublisher.publishEvent(audit);
     }
 }

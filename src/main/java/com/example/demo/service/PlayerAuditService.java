@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.mapper.PlayerAuditMapper;
 import com.example.demo.model.domain.PlayerAudit;
-import com.example.demo.model.dto.PlayerAuditCreateDto;
+import com.example.demo.model.dto.PlayerAuditEvent;
 import com.example.demo.model.dto.PlayerAuditReadDto;
 import com.example.demo.repository.PlayerAuditRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +20,11 @@ public class PlayerAuditService {
 
     /**
      * Метод для создания аудита пользователя
-     * @param playerAuditCreateDto - dto объект класса PlayerAuditCreateDto
+     * @param audit - объект класса PlayerAuditEvent
      */
     @Transactional
-    public void createAudit(PlayerAuditCreateDto playerAuditCreateDto){
-       playerAuditRepository.save(playerAuditMapper.dtoToDomain(playerAuditCreateDto));
+    public void createAudit(PlayerAuditEvent audit){
+       playerAuditRepository.save(playerAuditMapper.dtoToDomain(audit));
     }
 
     /**
@@ -33,8 +33,8 @@ public class PlayerAuditService {
      * @return - список аудита
      */
     public List<PlayerAudit> findAuditByPlayerId(int playerId){
-        PlayerAudit playerAudit1 = playerAuditRepository.findById(playerId).get();
-        return List.of(playerAudit1);
+        PlayerAudit playerAudit = playerAuditRepository.findById(playerId).get();
+        return List.of(playerAudit);
     }
 
     /**

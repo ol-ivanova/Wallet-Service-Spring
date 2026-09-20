@@ -2,6 +2,7 @@ package com.example.demo.model.dto;
 
 import com.example.demo.model.domain.Player;
 import com.example.demo.model.enums.AuditAction;
+import com.example.demo.model.enums.AuditEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Аудит пользователя - для создания записи")
-public class PlayerAuditCreateDto {
-    @Schema(description = "Тип активности")
+public class PlayerAuditEvent {
+    @Schema(description = "Тип аудита")
     private AuditAction action;
+    @Schema(description = "Сущность аудита")
+    private AuditEntity entityName;
     @Schema(description = "Пользователь")
     private Player player;
 }

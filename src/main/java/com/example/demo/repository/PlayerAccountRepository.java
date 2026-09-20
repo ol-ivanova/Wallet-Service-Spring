@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.domain.PlayerAccount;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ public interface PlayerAccountRepository extends JpaRepository<PlayerAccount, UU
      * @param accountNumber - номер счета
      * @return - сущность класса PlayerAccount
      */
+    @EntityGraph(attributePaths = "player")
     @Query(nativeQuery = true, value = """
         SELECT * FROM player_account WHERE account_number = :accountNumber;
     """)

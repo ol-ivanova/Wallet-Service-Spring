@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.model.domain.PlayerAudit;
-import com.example.demo.model.dto.PlayerAuditCreateDto;
+import com.example.demo.model.dto.PlayerAuditEvent;
 import com.example.demo.model.dto.PlayerAuditReadDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -15,10 +15,9 @@ import java.util.List;
 public interface PlayerAuditMapper {
     /**
      * Метод для преобразования dto в сущность
-     * @param playerAuditCreateDto - dto объект
+     * @param audit - объект аудита
      * @return - сущность класса PlayerAudit
      */
-    PlayerAudit dtoToDomain(PlayerAuditCreateDto playerAuditCreateDto);
-    PlayerAuditReadDto domainToDto(PlayerAudit playerAudit);
+    PlayerAudit dtoToDomain(PlayerAuditEvent audit);
     List<PlayerAuditReadDto> domainsToDtos(List<PlayerAudit> playerAudit);
 }
